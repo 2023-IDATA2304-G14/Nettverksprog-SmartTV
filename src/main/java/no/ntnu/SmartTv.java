@@ -18,6 +18,8 @@ public class SmartTv {
   public static final String TURN_OFF_COMMAND = "2";
   public static final String CHANNEL_UP_COMMAND = "up";
   public static final String CHANNEL_DOWN COMMAND = "down";
+  public static final String SET_CHANNEL_COMAND = "set";
+  public static final String GET_STATUS_COMMAND = "get";
 
   public static final String
   boolean isTvOn;
@@ -118,15 +120,36 @@ public class SmartTv {
     return clientRequest;
   }
 
-
   private String handleClientRequest(String clientRequest) {
     String response = null;
 
     if (clientRequest != null) {
-      if (clientRequest.equals(CHANNEL_COUNT_COMMAND)) {
-        response = handleChannelCountCommand();
-      } else if (clientRequest.equals(TURN_ON_COMMAND)) {
-        response = handleTurnOnCommand();
+      switch (clientRequest) {
+        case CHANNEL_COUNT_COMMAND:
+          response = handleChannelCountCommand();
+          break;
+        case TURN_ON_COMMAND:
+          response = handleTurnOnCommand();
+          break;
+        case TURN_OFF_COMMAND:
+          response = handleTurnOffCommand();
+          break;
+        case CHANNEL_UP_COMMAND:
+          response = handleChannelUpCommand();
+          break;
+        case CHANNEL_DOWN_COMMAND:
+          response = handleChannelDownCommand();
+          break;
+        case GET_STATUS_COMMAND:
+          response = handleGetStatusCommand();
+          break;
+        default:
+          if (clientRequest.startsWith(SET_CHANNEL_COMMAND)) {
+            response = handleSetChannelCommand(clientRequest);
+          } else {
+            response = "eUnknown command";
+          }
+          break;
       }
     }
 
@@ -137,11 +160,51 @@ public class SmartTv {
     isTvOn = true;
     return OK_RESPONSE;
   }
+  //bedre å endre den over til "if" og "else" istedenfor å legge til en heilt egen handleTurnOffCommand?
   private String handleTurnOffCommand() {
     IsTvOn = false;
     return OK_RESPONSE;
   }
 
+  private String handleChannelUpCommand() {
+    if (isTvOn) {
+      if (currentChannel < numberOfChannels) {
+        currentChannel++;
+      }
+      return "Channel set to " + currentChannel;
+    } else {
+      return "You must turn on the TV before you can change channels";
+    }
+  }
+
+  private String handleChannelDownCommand() {
+    if (isTvOn) {
+      if (currentChannel > 1) {
+        currentChannel--;
+      }
+      return "Channel set to " + currentChannel;
+    } else {
+      return "You must turn on the TV before you can change channels"
+    }
+  }
+
+  private String handleSetChannelCommand(String command) {
+    if (isTvOn) {
+      try {
+        int channelToSet = Integer.parseInt(command.substring(1)); //så lenge formatet er sX hvor X er kanalen
+        if (channelToSet >= 1 && channelToSet <= numberOfChannels) {
+          currentChannel = channelToSet;
+          return "Channel set to " + currentChannel;
+        } else {
+          return "Invalid channel number, try again";
+        }
+      } catch (NumberFormatException e) {
+        return "Invalid command, try again";
+      }
+    } else {
+      return "You must turn on the TV first";
+    }
+  }
   private String handleChannelCountCommand() {
     String response;
     if (isTvOn) {
@@ -152,6 +215,9 @@ public class SmartTv {
     return response;
   }
 
+  public String handleGetStatusCommand() {
+    return isTvOn ? "TV is ON" : "TV is OFF";
+  }
   /**
    * Send a response from the server to the client, over the TCP socket.
    *
