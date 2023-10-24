@@ -14,7 +14,7 @@ public class SmartTv {
   public static final int PORT_NUMBER = 10025;
   public static final String CHANNEL_COUNT_COMMAND = "count";
   public static final String TURN_ON_COMMAND = "1";
-  public static final String OK_REPONSE = "ok";
+  public static final String OK_RESPONSE = "ok";
   public static final String TURN_OFF_COMMAND = "2";
   public static final String CHANNEL_UP_COMMAND = "up";
   public static final String CHANNEL_DOWN COMMAND = "down";
@@ -135,7 +135,11 @@ public class SmartTv {
 
   private String handleTurnOnCommand() {
     isTvOn = true;
-    return OK_REPONSE;
+    return OK_RESPONSE;
+  }
+  private String handleTurnOffCommand() {
+    IsTvOn = false;
+    return OK_RESPONSE;
   }
 
   private String handleChannelCountCommand() {
