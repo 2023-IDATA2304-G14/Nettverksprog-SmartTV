@@ -20,7 +20,7 @@ public class RemoteControl {
   public static final String OK_RESPONSE = "ok";
   public static final String TURN_OFF_COMMAND = "2";
   public static final String CHANNEL_UP_COMMAND = "up";
-  public static final String CHANNEL_DOWN COMMAND = "down";
+  public static final String CHANNEL_DOWN_COMMAND = "down";
   public static final String SET_CHANNEL_COMAND = "set";
   public static final String GET_STATUS_COMMAND = "get";
 

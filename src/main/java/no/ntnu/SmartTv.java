@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Smart TV - TCP server.
@@ -17,11 +19,10 @@ public class SmartTv {
   public static final String OK_RESPONSE = "ok";
   public static final String TURN_OFF_COMMAND = "2";
   public static final String CHANNEL_UP_COMMAND = "up";
-  public static final String CHANNEL_DOWN COMMAND = "down";
-  public static final String SET_CHANNEL_COMAND = "set";
+  public static final String CHANNEL_DOWN_COMMAND = "down";
+  public static final String SET_CHANNEL_PREFIX = "set";
+  public static final String SET_CHANNEL_REGEX = "set\\s+(\\d+)";
   public static final String GET_STATUS_COMMAND = "get";
-
-  public static final String
   boolean isTvOn;
   final int numberOfChannels;
   int currentChannel;
@@ -144,7 +145,7 @@ public class SmartTv {
           response = handleGetStatusCommand();
           break;
         default:
-          if (clientRequest.startsWith(SET_CHANNEL_COMMAND)) {
+          if (clientRequest.startsWith(SET_CHANNEL_PREFIX)) {
             response = handleSetChannelCommand(clientRequest);
           } else {
             response = "eUnknown command";
@@ -162,7 +163,7 @@ public class SmartTv {
   }
   //bedre å endre den over til "if" og "else" istedenfor å legge til en heilt egen handleTurnOffCommand?
   private String handleTurnOffCommand() {
-    IsTvOn = false;
+    isTvOn = false;
     return OK_RESPONSE;
   }
 
@@ -184,22 +185,29 @@ public class SmartTv {
       }
       return "Channel set to " + currentChannel;
     } else {
-      return "You must turn on the TV before you can change channels"
+      return "You must turn on the TV before you can change channels";
     }
   }
 
   private String handleSetChannelCommand(String command) {
     if (isTvOn) {
       try {
-        int channelToSet = Integer.parseInt(command.substring(1)); //så lenge formatet er sX hvor X er kanalen
-        if (channelToSet >= 1 && channelToSet <= numberOfChannels) {
-          currentChannel = channelToSet;
-          return "Channel set to " + currentChannel;
+        Pattern regexPattern = Pattern.compile(SET_CHANNEL_REGEX);
+        Matcher regexMatcher = regexPattern.matcher(command);
+
+        if (regexMatcher.find()) {
+          int channel = Integer.parseInt(regexMatcher.group(1));
+          if (channel >= 1 && channel <= numberOfChannels) {
+            currentChannel = channel;
+            return "Channel set to " + currentChannel;
+          } else {
+            return "Channel must be between 1 and " + numberOfChannels;
+          }
         } else {
-          return "Invalid channel number, try again";
+          return "Invalid channel number";
         }
       } catch (NumberFormatException e) {
-        return "Invalid command, try again";
+        return "Invalid set command";
       }
     } else {
       return "You must turn on the TV first";
