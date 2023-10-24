@@ -124,6 +124,7 @@ public class SmartTv {
   private String handleClientRequest(String clientRequest) {
     String response = null;
 
+    //If TV is not ON and user does anything other then TURN ON, send msg.
     if (clientRequest != null) {
       if (!isTvOn && !clientRequest.equals(TURN_ON_COMMAND)) {
         return "TV is OFF. Please turn it ON first.";
