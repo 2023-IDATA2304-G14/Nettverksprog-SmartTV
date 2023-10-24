@@ -21,7 +21,7 @@ public class RemoteControl {
   public static final String TURN_OFF_COMMAND = "2";
   public static final String CHANNEL_UP_COMMAND = "up";
   public static final String CHANNEL_DOWN_COMMAND = "down";
-  public static final String SET_CHANNEL_COMAND = "set";
+  public static final String SET_CHANNEL_COMMAND = "set";
   public static final String GET_STATUS_COMMAND = "get";
 
   public static void main(String[] args) {
@@ -35,30 +35,30 @@ public class RemoteControl {
       socketWriter = new PrintWriter(socket.getOutputStream(), true);
       socketReader = new BufferedReader(
           new InputStreamReader(socket.getInputStream()));
-      // Test turning on the TV
+
+      System.out.println("Testing turning on the TV...");
       sendCommandToServer(TURN_ON_COMMAND);
 
-      // Test getting channel count
+      System.out.println("Testing getting channel count...");
       sendCommandToServer(CHANNEL_COUNT_COMMAND);
 
-      // Test increasing the channel
+      System.out.println("Testing increasing the channel...");
       sendCommandToServer(CHANNEL_UP_COMMAND);
 
-      // Test decreasing the channel
+      System.out.println("Testing decreasing the channel...");
       sendCommandToServer(CHANNEL_DOWN_COMMAND);
 
-      // Test setting a specific channel (e.g., channel 5)
-      sendCommandToServer("s5");
+      System.out.println("Testing setting a specific channel (channel 5)...");
+      sendCommandToServer(SET_CHANNEL_COMMAND + "5");
 
-      // Test getting TV status
+      System.out.println("Testing getting TV status...");
       sendCommandToServer(GET_STATUS_COMMAND);
 
-      // Test turning off the TV
+      System.out.println("Testing turning off the TV...");
       sendCommandToServer(TURN_OFF_COMMAND);
-      sendCommandToServer("c");
-      sendCommandToServer("1");
-      sendCommandToServer("c");
-      sendCommandToServer("s13");
+
+      //ka den her gjør?
+      sendCommandToServer("set 13");
 
     } catch (IOException e) {
       System.err.println("Could not establish connection to the server: " + e.getMessage());
