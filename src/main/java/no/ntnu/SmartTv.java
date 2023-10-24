@@ -12,9 +12,14 @@ import java.net.Socket;
  */
 public class SmartTv {
   public static final int PORT_NUMBER = 10025;
-  public static final String CHANNEL_COUNT_COMMAND = "c";
+  public static final String CHANNEL_COUNT_COMMAND = "count";
   public static final String TURN_ON_COMMAND = "1";
-  public static final String OK_REPONSE = "o";
+  public static final String OK_REPONSE = "ok";
+  public static final String TURN_OFF_COMMAND = "2";
+  public static final String CHANNEL_UP_COMMAND = "up";
+  public static final String CHANNEL_DOWN COMMAND = "down";
+
+  public static final String
   boolean isTvOn;
   final int numberOfChannels;
   int currentChannel;
