@@ -17,8 +17,8 @@ public class SmartTv {
   public static final String OK_RESPONSE = "ok";
   public static final String TURN_OFF_COMMAND = "2";
   public static final String CHANNEL_UP_COMMAND = "up";
-  public static final String CHANNEL_DOWN COMMAND = "down";
-  public static final String SET_CHANNEL_COMAND = "set";
+  public static final String CHANNEL_DOWN_COMMAND = "down";
+  public static final String SET_CHANNEL_COMMAND = "set";
   public static final String GET_STATUS_COMMAND = "get";
 
   public static final String
@@ -124,6 +124,10 @@ public class SmartTv {
     String response = null;
 
     if (clientRequest != null) {
+      if (!isTvOn && !clientRequest.equals(TURN_ON_COMMAND)) {
+        return "TV is OFF. Please turn it ON first.";
+      }
+
       switch (clientRequest) {
         case CHANNEL_COUNT_COMMAND:
           response = handleChannelCountCommand();
@@ -157,12 +161,17 @@ public class SmartTv {
   }
 
   private String handleTurnOnCommand() {
+    if (isTvOn) {
+      return "The TV is already ON";
+    }
     isTvOn = true;
     return OK_RESPONSE;
   }
-  //bedre å endre den over til "if" og "else" istedenfor å legge til en heilt egen handleTurnOffCommand?
   private String handleTurnOffCommand() {
-    IsTvOn = false;
+    if (isTvOn) {
+      return "The TV is already OFF";
+    }
+    isTvOn = false;
     return OK_RESPONSE;
   }
 
@@ -173,7 +182,7 @@ public class SmartTv {
       }
       return "Channel set to " + currentChannel;
     } else {
-      return "You must turn on the TV before you can change channels";
+      return "You must turn on the TV first";
     }
   }
 
@@ -184,7 +193,7 @@ public class SmartTv {
       }
       return "Channel set to " + currentChannel;
     } else {
-      return "You must turn on the TV before you can change channels"
+      return "You must turn on the TV first";
     }
   }
 
