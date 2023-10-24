@@ -1,4 +1,4 @@
-package no.ntnu;
+package main.java.no.ntnu;
 
 import static no.ntnu.SmartTv.PORT_NUMBER;
 
