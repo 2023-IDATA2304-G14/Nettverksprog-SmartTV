@@ -57,7 +57,7 @@ public class RemoteControl {
       System.out.println("Testing turning off the TV...");
       sendCommandToServer(TURN_OFF_COMMAND);
 
-      //ka den her gjør?
+      System.out.println("Testing setting a specific channel (channel 13)...");
       sendCommandToServer("set 13");
 
     } catch (IOException e) {
