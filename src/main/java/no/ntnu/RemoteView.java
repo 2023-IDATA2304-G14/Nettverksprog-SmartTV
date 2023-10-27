@@ -1,47 +1,61 @@
 package no.ntnu;
 
-import javax.swing.*;
-import java.awt.*;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
-public class RemoteView {
-    private JFrame frame;
-    JButton powerOnButton;
-    JButton powerOffButton;
-    JButton channelUpButton;
-    JButton channelDownButton;
-    JButton setChannelButton;
-    private JTextField channelField;
-    private JTextArea responseArea;
+public class RemoteView extends Application {
+    Button powerOnButton;
+    Button powerOffButton;
+    Button channelUpButton;
+    Button channelDownButton;
+    Button setChannelButton;
+    TextField channelField;
+    TextArea responseArea;
 
-    public RemoteView() {
-        frame = new JFrame("Remote Control");
-        frame.setLayout(new BorderLayout());
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Remote Control");
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(3, 2));
+        BorderPane root = new BorderPane();
+        GridPane mainPanel = new GridPane();
+        mainPanel.setPadding(new Insets(10, 10, 10, 10));
+        mainPanel.setVgap(10);
+        mainPanel.setHgap(10);
 
-        powerOnButton = new JButton("Turn On");
-        powerOffButton = new JButton("Turn Off");
-        channelUpButton = new JButton("Channel Up");
-        channelDownButton = new JButton("Channel Down");
-        setChannelButton = new JButton("Set Channel");
-        channelField = new JTextField();
+        powerOnButton = new Button("Turn On");
+        powerOffButton = new Button("Turn Off");
+        channelUpButton = new Button("Channel Up");
+        channelDownButton = new Button("Channel Down");
+        setChannelButton = new Button("Set Channel");
+        channelField = new TextField();
 
-        mainPanel.add(powerOnButton);
-        mainPanel.add(powerOffButton);
-        mainPanel.add(channelUpButton);
-        mainPanel.add(channelDownButton);
-        mainPanel.add(setChannelButton);
-        mainPanel.add(channelField);
+        mainPanel.add(powerOnButton, 0, 0);
+        mainPanel.add(powerOffButton, 1, 0);
+        mainPanel.add(channelUpButton, 0, 1);
+        mainPanel.add(channelDownButton, 1, 1);
+        mainPanel.add(setChannelButton, 0, 2);
+        mainPanel.add(channelField, 1, 2);
 
-        responseArea = new JTextArea();
+        responseArea = new TextArea();
         responseArea.setEditable(false);
 
-        frame.add(mainPanel, BorderLayout.CENTER);
-        frame.add(responseArea, BorderLayout.SOUTH);
+        root.setCenter(mainPanel);
+        root.setBottom(responseArea);
 
-        frame.setSize(400, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        Scene scene = new Scene(root, 400, 300);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
+
