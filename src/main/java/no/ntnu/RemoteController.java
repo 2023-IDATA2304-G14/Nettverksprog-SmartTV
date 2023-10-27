@@ -8,17 +8,12 @@ public class RemoteController {
         this.model = model;
         this.view = view;
 
-        this.view.powerOnButton.addActionListener(e -> turnOnTV());
-        this.view.powerOffButton.addActionListener(e -> turnOffTV());
-        this.view.channelUpButton.addActionListener(e -> channelUp());
-        this.view.channelDownButton.addActionListener(e -> channelDown());
-        this.view.setChannelButton.addActionListener(e -> setChannel());
+        this.view.powerOnButton.setOnAction(e -> turnOnTV());
+        this.view.powerOffButton.setOnAction(e -> turnOffTV());
+        this.view.channelUpButton.setOnAction(e -> channelUp());
+        this.view.channelDownButton.setOnAction(e -> channelDown());
+        this.view.setChannelButton.setOnAction(e -> setChannel());
     }
-
-    /**
-     * Kordan man gjør det herfra? koble opp serveren mot appen for å gjør
-     * kommandoane?
-     */
 
     private void turnOnTV() {
         // Communicate with model to turn on the TV
