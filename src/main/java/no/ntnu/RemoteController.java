@@ -1,4 +1,4 @@
-package main.java.no.ntnu;
+package no.ntnu;
 
 public class RemoteController {
     private RemoteControl model;

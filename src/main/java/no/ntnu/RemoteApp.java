@@ -1,4 +1,4 @@
-package main.java.no.ntnu;
+package no.ntnu;
 
 public class RemoteApp {
     public static void main(String[] args) {

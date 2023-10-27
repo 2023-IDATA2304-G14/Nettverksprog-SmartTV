@@ -1,4 +1,4 @@
-package main.java.no.ntnu;
+package no.ntnu;
 
 import javax.swing.*;
 import java.awt.*;
