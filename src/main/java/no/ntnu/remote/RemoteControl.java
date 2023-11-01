@@ -12,17 +12,6 @@ import static no.ntnu.tv.TvServer.PORT_NUMBER;
  * Remote control for a TV - a TCP client.
  */
 public class RemoteControl {
-  private Socket socket;
-  private BufferedReader socketReader;
-  private PrintWriter socketWriter;
-  public static final String CHANNEL_COUNT_COMMAND = "count";
-  public static final String TURN_ON_COMMAND = "1";
-  public static final String OK_RESPONSE = "ok";
-  public static final String TURN_OFF_COMMAND = "2";
-  public static final String CHANNEL_UP_COMMAND = "up";
-  public static final String CHANNEL_DOWN_COMMAND = "down";
-  public static final String SET_CHANNEL_COMMAND = "set";
-  public static final String GET_STATUS_COMMAND = "get";
 
   public static void main(String[] args) {
     RemoteControl remoteControl = new RemoteControl();
