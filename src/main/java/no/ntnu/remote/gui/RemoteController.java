@@ -1,12 +1,10 @@
 package no.ntnu.remote.gui;
 
-import no.ntnu.remote.RemoteControl;
-
 public class RemoteController {
-    private RemoteControl model;
+    private RemoteModel model;
     private RemoteView view;
 
-    public RemoteController(RemoteControl model, RemoteView view) {
+    public RemoteController(RemoteModel model, RemoteView view) {
         this.model = model;
         this.view = view;
 
