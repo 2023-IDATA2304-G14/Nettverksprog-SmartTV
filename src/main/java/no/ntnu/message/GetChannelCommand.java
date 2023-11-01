@@ -1,6 +1,6 @@
-package no.ntnu.Commands;
+package no.ntnu.message;
 
-import no.ntnu.SmartTv;
+import no.ntnu.tv.SmartTv;
 
 /**
  * A command requesting to know the current channel of a TV.

@@ -1,4 +1,4 @@
-package no.ntnu.Commands;
+package no.ntnu.message;
 
 /**
  * A message containing the number of channels for the TV.

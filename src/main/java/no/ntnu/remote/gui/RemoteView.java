@@ -1,4 +1,4 @@
-package no.ntnu;
+package no.ntnu.remote.gui;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;

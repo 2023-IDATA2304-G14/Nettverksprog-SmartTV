@@ -1,4 +1,4 @@
-package no.ntnu.Commands;
+package no.ntnu.message;
 
 /**
  * An error message after a command execution which failed.

@@ -1,4 +1,6 @@
-package no.ntnu;
+package no.ntnu.remote.gui;
+
+import no.ntnu.remote.RemoteControl;
 
 public class RemoteController {
     private RemoteControl model;

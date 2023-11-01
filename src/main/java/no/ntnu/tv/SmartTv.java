@@ -1,4 +1,4 @@
-package no.ntnu;
+package no.ntnu.tv;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Smart TV - TCP server.
@@ -20,6 +18,7 @@ public class SmartTv {
   boolean isTcpServerRunning;
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
+  private static final String ERR_MUST_BE_ON = "TV must be on";
 
   /**
    * Create a new Smart TV.
@@ -35,31 +34,6 @@ public class SmartTv {
     isTvOn = false;
     currentChannel = 1;
   }
-
-  public static void main(String[] args) {
-    SmartTv tv = new SmartTv(13);
-    tv.startServer();
-  }
-
-
-  /**
-   * Start TCP server for this TV.
-   */
-  private void startServer() {
-    ServerSocket listeningSocket = openListeningSocket();
-    System.out.println("Server listening on port " + PORT_NUMBER);
-    if (listeningSocket != null) {
-      isTcpServerRunning = true;
-      while (isTcpServerRunning) {
-        Socket clientSocket = acceptNextClientConnection(listeningSocket);
-        if (clientSocket != null) {
-          System.out.println("New client connected from " + clientSocket.getRemoteSocketAddress());
-          handleClient(clientSocket);
-        }
-      }
-    }
-  }
-
 
   private ServerSocket openListeningSocket() {
     ServerSocket listeningSocket = null;
@@ -153,79 +127,31 @@ public class SmartTv {
     return response;
   }
 
-  private String handleTurnOnCommand() {
-    if (isTvOn) {
-      return "The TV is already ON";
-    }
+  public void turnOn() {
     isTvOn = true;
-    return OK_RESPONSE;
   }
-  private String handleTurnOffCommand() {
-    if (isTvOn) {
-      return "The TV is already OFF";
-    }
+  public void turnOff() {
     isTvOn = false;
-    return OK_RESPONSE;
   }
 
-  private String handleChannelUpCommand() {
-    if (isTvOn) {
-      if (currentChannel < numberOfChannels) {
-        currentChannel++;
-      }
-      return "Channel set to " + currentChannel;
-    } else {
-      return "You must turn on the TV first";
+  public void setChannel(int channel) throws IllegalArgumentException, IllegalStateException {
+    if (!isTvOn) {
+      throw new IllegalStateException(ERR_MUST_BE_ON);
     }
-  }
-
-  private String handleChannelDownCommand() {
-    if (isTvOn) {
-      if (currentChannel > 1) {
-        currentChannel--;
-      }
-      return "Channel set to " + currentChannel;
-    } else {
-      return "You must turn on the TV first";
+    if (channel < 1 || channel > numberOfChannels) {
+      throw new IllegalArgumentException("Channel must be between 1 and " + numberOfChannels);
     }
+    currentChannel = channel;
   }
-
-  private String handleSetChannelCommand(String command) {
-    if (isTvOn) {
-      try {
-        Pattern regexPattern = Pattern.compile(SET_CHANNEL_REGEX);
-        Matcher regexMatcher = regexPattern.matcher(command);
-
-        if (regexMatcher.find()) {
-          int channel = Integer.parseInt(regexMatcher.group(1));
-          if (channel >= 1 && channel <= numberOfChannels) {
-            currentChannel = channel;
-            return "Channel set to " + currentChannel;
-          } else {
-            return "Channel must be between 1 and " + numberOfChannels;
-          }
-        } else {
-          return "Invalid channel number";
-        }
-      } catch (NumberFormatException e) {
-        return "Invalid set command";
-      }
-    } else {
-      return "You must turn on the TV first";
+  public int getChannelCount() {
+    if (!isTvOn) {
+      throw new IllegalStateException(ERR_MUST_BE_ON);
     }
-  }
-  private String handleChannelCountCommand() {
-    String response;
-    if (isTvOn) {
-      response = "c" + numberOfChannels;
-    } else {
-      response = "eMust turn the TV on first";
-    }
-    return response;
+    return numberOfChannels;
   }
 
-  public String handleGetStatusCommand() {
-    return isTvOn ? "TV is ON" : "TV is OFF";
+  public boolean isTvOn() {
+    return isTvOn;
   }
   /**
    * Send a response from the server to the client, over the TCP socket.

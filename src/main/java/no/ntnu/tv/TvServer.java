@@ -1,9 +1,9 @@
-package no.ntnu.network;
+package no.ntnu.tv;
 
-import no.ntnu.Commands.Command;
-import no.ntnu.Commands.Message;
-import no.ntnu.Commands.MessageSerializer;
-import no.ntnu.SmartTv;
+import no.ntnu.message.Command;
+import no.ntnu.message.Message;
+import no.ntnu.message.MessageSerializer;
+import no.ntnu.tv.SmartTv;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,8 +23,9 @@ public class TvServer {
 
   public TvServer(SmartTv smartTv) {
     this.smartTv = smartTv;
+    startServer();
   }
-  public void startServer() {
+  private void startServer() {
     listeningSocket = openListeningSocket();
     System.out.println("Server listening on port " + PORT_NUMBER);
     if (listeningSocket != null) {

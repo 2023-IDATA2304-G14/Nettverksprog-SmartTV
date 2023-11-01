@@ -1,4 +1,4 @@
-package no.ntnu.Commands;
+package no.ntnu.message;
 
 public class MessageSerializer {
 
@@ -15,7 +15,7 @@ public class MessageSerializer {
   public static final String OK_RESPONSE = "Ok";
   public static final String TV_STATE_ON = "TVOn";
   public static final String TV_STATE_OFF = "TVOff";
-  private static final String SINGLE_PARAMETER_COMMAND_REGEX = "^[a-zA-Z]+$";
+  private static final String SINGLE_PARAMETER_COMMAND_REGEX = "^[a-zA-Z0-9]+$";
   public static String serialize(Message message) {
     if (message instanceof ChannelCountCommand) {
       return CHANNEL_COUNT_COMMAND;

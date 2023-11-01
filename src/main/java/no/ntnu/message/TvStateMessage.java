@@ -1,4 +1,4 @@
-package no.ntnu.Commands;
+package no.ntnu.message;
 
 /**
  * A message telling whether the TV is ON or off.

@@ -1,4 +1,4 @@
-package no.ntnu.Commands;
+package no.ntnu.message;
 
 /**
  * A message reporting the current channel of a TV.
