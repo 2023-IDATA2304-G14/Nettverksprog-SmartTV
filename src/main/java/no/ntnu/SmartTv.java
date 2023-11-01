@@ -14,15 +14,6 @@ import java.util.regex.Pattern;
  */
 public class SmartTv {
   public static final int PORT_NUMBER = 10025;
-  public static final String CHANNEL_COUNT_COMMAND = "count";
-  public static final String TURN_ON_COMMAND = "1";
-  public static final String OK_RESPONSE = "ok";
-  public static final String TURN_OFF_COMMAND = "2";
-  public static final String CHANNEL_UP_COMMAND = "up";
-  public static final String CHANNEL_DOWN_COMMAND = "down";
-  public static final String SET_CHANNEL_PREFIX = "set";
-  public static final String SET_CHANNEL_REGEX = "set\\s+(\\d+)";
-  public static final String GET_STATUS_COMMAND = "get";
   boolean isTvOn;
   final int numberOfChannels;
   int currentChannel;
