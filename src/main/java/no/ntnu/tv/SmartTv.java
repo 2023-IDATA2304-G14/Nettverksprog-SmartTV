@@ -71,6 +71,20 @@ public class SmartTv {
   }
 
   /**
+   * Returns the current channel number.
+   * The channel number is between 1 and the number of channels.
+   *
+   * @return The current channel number
+   * @throws IllegalStateException If the TV is off
+   */
+  public int getCurrentChannel() {
+    if (!isTvOn) {
+      throw new IllegalStateException(ERR_MUST_BE_ON);
+    }
+    return currentChannel;
+  }
+
+  /**
    * Returns whether the TV is currently turned on.
    *
    * @return True if the TV is on, false otherwise

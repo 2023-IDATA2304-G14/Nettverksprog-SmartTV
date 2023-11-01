@@ -5,8 +5,6 @@ public class MessageSerializer {
   public static final String CHANNEL_COUNT_COMMAND = "count";
   public static final String TURN_ON_COMMAND = "1";
   public static final String TURN_OFF_COMMAND = "0";
-  public static final String CHANNEL_UP_COMMAND = "up";
-  public static final String CHANNEL_DOWN_COMMAND = "down";
   public static final String SET_CHANNEL_COMMAND_PREFIX = "set";
   private static final String SET_CHANNEL_COMMAND_REGEX = "set\\s+(\\d+)";
   public static final String GET_STATUS_COMMAND = "get";
@@ -23,11 +21,7 @@ public class MessageSerializer {
       return TURN_ON_COMMAND;
     } else if (message instanceof TurnOffCommand) {
       return TURN_OFF_COMMAND;
-    } else if (message instanceof ChannelUpCommand) {
-      return CHANNEL_UP_COMMAND;
-    } else if (message instanceof ChannelDownCommand) {
-      return CHANNEL_DOWN_COMMAND;
-    } else if (message instanceof GetStatusCommand) {
+    } else if (message instanceof GetChannelCommand) {
       return GET_STATUS_COMMAND;
     } else if (message instanceof SetChannelCommand) {
       return SET_CHANNEL_COMMAND_PREFIX + " " + ((SetChannelCommand) message).getChannel();
@@ -45,12 +39,6 @@ public class MessageSerializer {
           return new TurnOnCommand();
         case TURN_OFF_COMMAND:
           return new TurnOffCommand();
-        case CHANNEL_UP_COMMAND:
-          return new ChannelUpCommand();
-        case CHANNEL_DOWN_COMMAND:
-          return new ChannelDownCommand();
-        case GET_STATUS_COMMAND:
-          return new GetStatusCommand();
         default:
           throw new IllegalArgumentException("Unknown command");
       }
