@@ -11,10 +11,21 @@ import java.net.Socket;
 
 public class RemoteClient {
 
-  private static final String host = "localhost";
+  private static final String DEFAULT_HOST = "localhost";
   private Socket socket;
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
+
+  public RemoteClient(RemoteClientListener listener) {
+    this(DEFAULT_HOST, TvServer.PORT_NUMBER, listener);
+  }
+
+  public RemoteClient(String host, int port, RemoteClientListener listener) throws RuntimeException {
+    if (!startClient(host, port)) {
+          throw new RuntimeException("Could not connect to server");
+    }
+    startListeningThread(listener);
+  }
 
   /**
    * Starts the client and connects to the server.
@@ -22,9 +33,9 @@ public class RemoteClient {
    *
    * @return true if the client successfully connected to the server, false otherwise.
    */
-  public boolean startClient() {
+  private boolean startClient(String host, int port) {
     try {
-      socket = new Socket(host, TvServer.PORT_NUMBER);
+      socket = new Socket(host, port);
       socketWriter = new PrintWriter(socket.getOutputStream(), true);
       socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       return true;
@@ -40,7 +51,7 @@ public class RemoteClient {
    * @param listener the listener that will be notified when a response is received.
    * #see RemoteClientListener
    */
-    public void startListeningThread(RemoteClientListener listener) {
+    private void startListeningThread(RemoteClientListener listener) {
         new Thread(() -> {
           Message message = null;
             do {

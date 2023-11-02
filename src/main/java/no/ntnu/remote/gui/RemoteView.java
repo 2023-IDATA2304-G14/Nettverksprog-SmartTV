@@ -65,7 +65,6 @@ public class RemoteView {
         powerOffButton.setOnAction(e -> remoteController.turnOffTV());
         channelUpButton.setOnAction(e -> remoteController.channelUp());
         channelDownButton.setOnAction(e -> remoteController.channelDown());
-        setChannelButton.setOnAction(e -> remoteController.setChannel());
     }
 }
 

@@ -16,16 +16,20 @@ public class RemoteModel implements RemoteClientListener {
   private final BooleanProperty isOn = new SimpleBooleanProperty();
   private final IntegerProperty channelCount = new SimpleIntegerProperty();
   private final IntegerProperty currentChannel = new SimpleIntegerProperty();
-  private final RemoteClient client = new RemoteClient();
+  private RemoteClient client;
 
     public RemoteModel(RemoteView view) {
         this.view = view;
-        init();
     }
 
-    private void init() {
-      client.startClient();
-      client.startListeningThread(this);
+    private void removeClient() {
+      if (client != null)
+        client.stopClient();
+    }
+
+    public void newClient(String host, int port) {
+      removeClient();
+      client = new RemoteClient(host, port, this);
     }
 
     @Override
