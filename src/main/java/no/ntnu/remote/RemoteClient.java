@@ -9,16 +9,34 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-
+/**
+ * Handling connection to the server.
+ *
+ * @author Anders Lund
+ * @version 02.11.2023
+ */
 public class RemoteClient {
   private Socket socket;
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
 
+  /**
+   * Construct a remote client with default hostname and port.
+   *
+   * @param listener The listener of the remote client
+   */
   public RemoteClient(RemoteClientListener listener) {
     this(TvServer.DEFAULT_HOSTNAME, TvServer.DEFAULT_PORT, listener);
   }
 
+  /**
+   *
+   *
+   * @param host The IP tp the host.
+   * @param port The port tp the host.
+   * @param listener The listener of the remote client.
+   * @throws RuntimeException Throws a RuntimeException if there is an error.
+   */
   public RemoteClient(String host, int port, RemoteClientListener listener) throws RuntimeException {
     if (!startClient(host, port)) {
           throw new RuntimeException("Could not connect to server");

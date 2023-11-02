@@ -1,20 +1,30 @@
 package no.ntnu.remote.gui;
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import org.w3c.dom.Text;
-
-import java.io.InputStreamReader;
 import java.util.Optional;
+
+/**
+ * The RemoteView represents the view component of the Remote MVC architecture
+ * This class is responsible for showing the user the GUI, and let them execute
+ * button presses.
+ *
+ * @author Lars Barstad & Daniel Neset
+ * @version 02.11.2023
+ */
 
 public class RemoteView {
     private Button powerOnButton;
@@ -24,16 +34,26 @@ public class RemoteView {
     private Button setChannelButton;
     private TextField channelField;
     private TextArea responseArea;
-
     private RemoteController remoteController;
     private RemoteModel remoteModel;
 
+    /**
+     * Constructor of the RemoteView. Initialize the scene and connect the view to the model
+     * and controller.
+     *
+     * @param primaryStage The primary JavaFX stage where the RemoteView will be displayed.
+     */
     public RemoteView(Stage primaryStage) {
         this.remoteModel = new RemoteModel(this);
         this.remoteController = new RemoteController(remoteModel, this);
         initialize(primaryStage);
     }
 
+    /**
+     *  Initialize the stage and displays the GUI components.
+     *
+     * @param primaryStage The primary JavaFX stage where the RemoteView will be displayed.
+     */
     private void initialize(Stage primaryStage){
         primaryStage.setTitle("Remote Control");
 
@@ -67,7 +87,7 @@ public class RemoteView {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        alter();
+        dialog();
 
         powerOnButton.setOnAction(e -> remoteController.turnOnTV());
         powerOffButton.setOnAction(e -> remoteController.turnOffTV());
@@ -75,7 +95,11 @@ public class RemoteView {
         channelDownButton.setOnAction(e -> remoteController.channelDown());
     }
 
-    private void alter(){
+    /**
+     * Helper class that display a dialog where the user can input the ip and
+     * the port to which tv one is going to connect to.
+     */
+    private void dialog(){
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Select TV");
         dialog.setHeaderText("Please enter the IP-address and the Port of the TV.");
