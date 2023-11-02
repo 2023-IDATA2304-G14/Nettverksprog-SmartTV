@@ -20,11 +20,21 @@ public class TvServer {
   private Socket clientSocket;
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
+  private int port;
+  private boolean useCustomPort;
 
   public TvServer(SmartTv smartTv) {
     this.smartTv = smartTv;
     startServer();
   }
+
+  public TvServer(SmartTv smartTv, int port) {
+    this.port = port;
+    this.useCustomPort = true;
+    this.smartTv = smartTv;
+    startServer();
+  }
+
   private void startServer() {
     listeningSocket = openListeningSocket();
     System.out.println("Server listening on port " + DEFAULT_PORT);
@@ -87,11 +97,16 @@ public class TvServer {
 
   private ServerSocket openListeningSocket() {
     ServerSocket listeningSocket = null;
+    port = useCustomPort ? port : DEFAULT_PORT;
     try {
-      listeningSocket = new ServerSocket(DEFAULT_PORT);
+      listeningSocket = new ServerSocket(port);
     } catch (IOException e) {
       System.err.println("Could not open server socket: " + e.getMessage());
     }
     return listeningSocket;
+  }
+
+  public SmartTv getSmartTv() {
+    return smartTv;
   }
 }
