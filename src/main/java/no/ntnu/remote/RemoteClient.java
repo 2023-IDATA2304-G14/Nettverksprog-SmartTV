@@ -17,7 +17,7 @@ public class RemoteClient {
   private PrintWriter socketWriter;
 
   public RemoteClient(RemoteClientListener listener) {
-    this(DEFAULT_HOST, TvServer.PORT_NUMBER, listener);
+    this(DEFAULT_HOST, TvServer.DEFAULT_PORT, listener);
   }
 
   public RemoteClient(String host, int port, RemoteClientListener listener) throws RuntimeException {
