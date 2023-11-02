@@ -16,8 +16,7 @@ public class RemoteController {
     }
 
     private void turnOnTV() {
-        // Communicate with model to turn on the TV
-        // Update the view's responseArea with the server's response
+        model.turnOnTV();
     }
 
     private void turnOffTV() {
