@@ -3,7 +3,6 @@ package no.ntnu.tv;
 import no.ntnu.message.Command;
 import no.ntnu.message.Message;
 import no.ntnu.message.MessageSerializer;
-import no.ntnu.tv.SmartTv;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +12,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TvServer {
-  public static final int PORT_NUMBER = 12345;
+  public static final String DEFAULT_HOSTNAME = "localhost";
+  public static final int DEFAULT_PORT = 12345;
   private final SmartTv smartTv;
   private boolean isServerRunning;
   private ServerSocket listeningSocket;
@@ -27,7 +27,7 @@ public class TvServer {
   }
   private void startServer() {
     listeningSocket = openListeningSocket();
-    System.out.println("Server listening on port " + PORT_NUMBER);
+    System.out.println("Server listening on port " + DEFAULT_PORT);
     if (listeningSocket != null) {
       isServerRunning = true;
       while (isServerRunning) {
@@ -88,7 +88,7 @@ public class TvServer {
   private ServerSocket openListeningSocket() {
     ServerSocket listeningSocket = null;
     try {
-      listeningSocket = new ServerSocket(PORT_NUMBER);
+      listeningSocket = new ServerSocket(DEFAULT_PORT);
     } catch (IOException e) {
       System.err.println("Could not open server socket: " + e.getMessage());
     }
