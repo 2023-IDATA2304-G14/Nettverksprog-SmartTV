@@ -1,9 +1,7 @@
-package no.ntnu;
+package no.ntnu.remote.gui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import no.ntnu.remote.gui.RemoteController;
-import no.ntnu.remote.gui.RemoteModel;
 import no.ntnu.remote.gui.RemoteView;
 
 public class RemoteApp extends Application {

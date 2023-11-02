@@ -14,7 +14,7 @@
 
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
         <maven.surefire.plugin.version>3.0.0-M7</maven.surefire.plugin.version>
-        <application.main>no.ntnu.RemoteApp</application.main>
+        <application.main>no.ntnu.remote.gui.RemoteApp</application.main>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
     </properties>
 
