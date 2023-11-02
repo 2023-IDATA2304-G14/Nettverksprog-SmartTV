@@ -9,15 +9,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class RemoteClient {
 
-  private static final String DEFAULT_HOST = "localhost";
+public class RemoteClient {
   private Socket socket;
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
 
   public RemoteClient(RemoteClientListener listener) {
-    this(DEFAULT_HOST, TvServer.DEFAULT_PORT, listener);
+    this(TvServer.DEFAULT_HOSTNAME, TvServer.DEFAULT_PORT, listener);
   }
 
   public RemoteClient(String host, int port, RemoteClientListener listener) throws RuntimeException {
