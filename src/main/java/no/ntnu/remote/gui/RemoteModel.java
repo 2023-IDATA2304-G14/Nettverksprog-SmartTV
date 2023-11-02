@@ -27,7 +27,7 @@ public class RemoteModel implements RemoteClientListener {
         client.stopClient();
     }
 
-    public void newClient(String host, int port) {
+    public void newClient(String host, int port) throws RuntimeException{
       removeClient();
       client = new RemoteClient(host, port, this);
     }
