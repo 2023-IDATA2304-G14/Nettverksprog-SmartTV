@@ -38,8 +38,6 @@ public class RemoteView {
     private TextArea responseArea;
     private RemoteController remoteController;
     private RemoteModel remoteModel;
-    private ChangeListener<String> ipTextFieldListener;
-    private ChangeListener<String> portTextFieldListener;
 
 
     /**
@@ -132,11 +130,11 @@ public class RemoteView {
         Node loginButton = dialog.getDialogPane().lookupButton(selectButtonType);
         loginButton.setDisable(true);
 
-        ipTextFieldListener = (observableValue, s, t1) -> {
+        ChangeListener<String> ipTextFieldListener = (observableValue, s, t1) -> {
             loginButton.setDisable(t1.trim().isEmpty() || port.getText().trim().isEmpty());
         };
 
-        portTextFieldListener = (observableValue2, s2, t2) -> {
+        ChangeListener<String> portTextFieldListener = (observableValue2, s2, t2) -> {
             loginButton.setDisable(t2.trim().isEmpty() || ip.getText().trim().isEmpty());
         };
 
@@ -162,10 +160,6 @@ public class RemoteView {
             remoteModel.newClient(ipPort.getKey(), Integer.parseInt(ipPort.getValue()));
             System.out.println("ip=" + ipPort.getKey() + ", port=" + ipPort.getValue());
         });
-
-//        Clears the listeners to avoid memory leaks
-        ipTextFieldListener = null;
-        portTextFieldListener = null;
     }
 
 }
