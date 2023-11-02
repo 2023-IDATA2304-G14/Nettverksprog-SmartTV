@@ -11,16 +11,27 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class RemoteView extends Application {
-    Button powerOnButton;
-    Button powerOffButton;
-    Button channelUpButton;
-    Button channelDownButton;
-    Button setChannelButton;
-    TextField channelField;
-    TextArea responseArea;
+    private Button powerOnButton;
+    private Button powerOffButton;
+    private Button channelUpButton;
+    private Button channelDownButton;
+    private Button setChannelButton;
+    private TextField channelField;
+    private TextArea responseArea;
+
+    private RemoteController remoteController;
+    private RemoteModel remoteModel;
 
     @Override
     public void start(Stage primaryStage) {
+        this.remoteModel = new RemoteModel(this);
+        this.remoteController = new RemoteController(remoteModel, this);
+
+        initilize(primaryStage);
+
+    }
+
+    private void initilize(Stage primaryStage){
         primaryStage.setTitle("Remote Control");
 
         BorderPane root = new BorderPane();
@@ -52,6 +63,12 @@ public class RemoteView extends Application {
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        powerOnButton.setOnAction(e -> remoteController.turnOnTV());
+        powerOffButton.setOnAction(e -> remoteController.turnOffTV());
+        channelUpButton.setOnAction(e -> remoteController.channelUp());
+        channelDownButton.setOnAction(e -> remoteController.channelDown());
+        setChannelButton.setOnAction(e -> remoteController.setChannel());
     }
 
     public static void main(String[] args) {
