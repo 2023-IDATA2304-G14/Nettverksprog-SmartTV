@@ -15,6 +15,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import java.util.Optional;
@@ -39,7 +41,7 @@ public class RemoteView {
      * @param primaryStage The primary JavaFX stage where the RemoteView will be displayed.
      */
     public RemoteView(Stage primaryStage) {
-        this.remoteModel = new RemoteModel(this);
+        this.remoteModel = new RemoteModel();
         this.remoteController = new RemoteController(remoteModel, this);
         initialize(primaryStage);
     }
@@ -73,6 +75,72 @@ public class RemoteView {
         TextArea responseArea = new TextArea();
         responseArea.setEditable(false);
 
+        VBox topPanel = new VBox();
+
+        HBox hostBox = new HBox();
+        Label hostLabel = new Label("Host: ");
+        Label host = new Label();
+
+        ChangeListener<String> hostListener = (observable, oldValue, newValue) -> {
+            host.setText(newValue);
+        };
+        remoteModel.hostProperty().addListener(new WeakChangeListener<>(hostListener));
+        host.setText(remoteModel.hostProperty().getValue());
+
+        hostBox.getChildren().addAll(hostLabel, host);
+
+        HBox portBox = new HBox();
+        Label portLabel = new Label("Port: ");
+        Label port = new Label();
+
+        ChangeListener<Number> portListener = (observable, oldValue, newValue) -> {
+            port.setText(newValue.toString());
+        };
+        remoteModel.portProperty().addListener(new WeakChangeListener<>(portListener));
+        port.setText(remoteModel.portProperty().getValue().toString());
+
+        portBox.getChildren().addAll(portLabel, port);
+
+        HBox powerBox = new HBox();
+        Label powerLabel = new Label("Power: ");
+        Label power = new Label();
+
+        ChangeListener<Boolean> powerListener = (observable, oldValue, newValue) -> {
+            power.setText(Boolean.TRUE.equals(newValue) ? "On" : "Off");
+        };
+        remoteModel.isOnProperty().addListener(new WeakChangeListener<>(powerListener));
+        power.setText(Boolean.TRUE.equals(remoteModel.isOnProperty().getValue()) ? "On" : "Off");
+
+        powerBox.getChildren().addAll(powerLabel, power);
+
+        HBox currentChannelBox = new HBox();
+        Label currentChannelLabel = new Label("Current Channel: ");
+        Label currentChannel = new Label();
+
+        ChangeListener<Number> currentChannelListener = (observable, oldValue, newValue) -> {
+            currentChannel.setText(newValue.toString());
+        };
+        remoteModel.currentChannelProperty().addListener(new WeakChangeListener<>(currentChannelListener));
+        currentChannel.setText(remoteModel.currentChannelProperty().getValue().toString());
+
+        currentChannelBox.getChildren().addAll(currentChannelLabel, currentChannel);
+
+        HBox channelCountBox = new HBox();
+        Label channelCountLabel = new Label("Channel Count: ");
+        Label channelCount = new Label();
+
+        ChangeListener<Number> channelCountListener = (observable, oldValue, newValue) -> {
+            channelCount.setText(newValue.toString());
+        };
+        remoteModel.channelCountProperty().addListener(new WeakChangeListener<>(channelCountListener));
+        channelCount.setText(remoteModel.channelCountProperty().getValue().toString());
+
+        channelCountBox.getChildren().addAll(channelCountLabel, channelCount);
+
+        topPanel.setSpacing(5);
+        topPanel.getChildren().addAll(hostBox, portBox, powerBox, currentChannelBox, channelCountBox);
+
+        root.setTop(topPanel);
         root.setCenter(mainPanel);
         root.setBottom(responseArea);
 

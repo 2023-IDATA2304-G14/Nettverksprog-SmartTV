@@ -38,6 +38,7 @@ public class ClientHandler extends Thread {
           } else {
             sendResponseToClient(response);
           }
+          System.out.println("Sent to client: " + response);
         }
       } else {
         response = null;

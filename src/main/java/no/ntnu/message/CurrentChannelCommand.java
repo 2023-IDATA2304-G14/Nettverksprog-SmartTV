@@ -5,7 +5,7 @@ import no.ntnu.tv.SmartTv;
 /**
  * A command requesting to know the current channel of a TV.
  */
-public class GetChannelCommand extends Command {
+public class CurrentChannelCommand extends Command {
     @Override
     public Message execute(SmartTv logic) {
         Message response;

@@ -77,6 +77,7 @@ public class SmartTv {
     if (channel < 1 || channel > channelCount) {
       throw new IllegalArgumentException("Channel must be between 1 and " + channelCount);
     }
+    System.out.println("Setting channel to " + channel);
     currentChannel = channel;
     notifySubscribersOfCurrentChannel();
   }

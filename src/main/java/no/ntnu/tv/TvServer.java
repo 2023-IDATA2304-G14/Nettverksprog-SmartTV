@@ -48,6 +48,7 @@ public class TvServer {
   }
 
   public void broadcastMessage(Message response) {
+    System.out.println("Broadcasting message to " + connectedClients.size() + " clients");
     for (ClientHandler client : connectedClients) {
       client.sendResponseToClient(response);
     }

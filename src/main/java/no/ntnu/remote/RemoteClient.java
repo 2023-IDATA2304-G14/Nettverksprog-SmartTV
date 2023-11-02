@@ -86,7 +86,7 @@ public class RemoteClient {
                     message = null;
                   }
                 } catch (IOException e) {
-                    System.out.println("Error reading from server: " + e.getMessage());
+                    System.err.println("Error reading from server: " + e.getMessage());
                 }
             } while (message != null);
         }).start();
@@ -107,6 +107,8 @@ public class RemoteClient {
           listener.handleCurrentChannel(currentChannelMessage.getChannel());
         } else if (message instanceof ErrorMessage errorMessage) {
           listener.handleErrorMessage(errorMessage.getMessage());
+        } else {
+          System.out.println("Unhandled message received from server: " + message.getClass().getSimpleName());
         }
     }
 
