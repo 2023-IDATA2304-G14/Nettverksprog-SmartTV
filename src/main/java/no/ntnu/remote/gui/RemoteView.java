@@ -1,6 +1,8 @@
 package no.ntnu.remote.gui;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -36,6 +38,9 @@ public class RemoteView {
     private TextArea responseArea;
     private RemoteController remoteController;
     private RemoteModel remoteModel;
+    private ChangeListener<String> ipTextFieldListener;
+    private ChangeListener<String> portTextFieldListener;
+
 
     /**
      * Constructor of the RemoteView. Initialize the scene and connect the view to the model
@@ -127,13 +132,17 @@ public class RemoteView {
         Node loginButton = dialog.getDialogPane().lookupButton(selectButtonType);
         loginButton.setDisable(true);
 
-        ip.textProperty().addListener(((observableValue, s, t1) -> {
+        ipTextFieldListener = (observableValue, s, t1) -> {
             loginButton.setDisable(t1.trim().isEmpty() || port.getText().trim().isEmpty());
-        }));
+        };
 
-        port.textProperty().addListener(((observableValue2, s2, t2) -> {
+        portTextFieldListener = (observableValue2, s2, t2) -> {
             loginButton.setDisable(t2.trim().isEmpty() || ip.getText().trim().isEmpty());
-        }));
+        };
+
+        ip.textProperty().addListener(new WeakChangeListener<>(ipTextFieldListener));
+
+        port.textProperty().addListener(new WeakChangeListener<>(portTextFieldListener));
 
 
         dialog.getDialogPane().setContent(grid);
@@ -154,6 +163,9 @@ public class RemoteView {
             System.out.println("ip=" + ipPort.getKey() + ", port=" + ipPort.getValue());
         });
 
+//        Clears the listeners to avoid memory leaks
+        ipTextFieldListener = null;
+        portTextFieldListener = null;
     }
 
 }
