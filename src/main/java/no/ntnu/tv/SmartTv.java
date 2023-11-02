@@ -1,28 +1,40 @@
 package no.ntnu.tv;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Smart TV - TCP server.
  */
 public class SmartTv {
   private boolean isTvOn;
-  private final int numberOfChannels;
+  private int channelCount;
   private int currentChannel;
   private static final String ERR_MUST_BE_ON = "TV must be on";
+  private final List<SmartTvSubscriber> subscribers = new ArrayList<>();
 
   /**
    * Creates a new Smart TV with the given number of channels.
    * The TV is initially off and on channel 1.
    *
-   * @param numberOfChannels The total number of channels the TV has
+   * @param channelCount The total number of channels the TV has
    */
-  public SmartTv(int numberOfChannels) {
-    if (numberOfChannels < 1) {
-      throw new IllegalArgumentException("Number of channels must be a positive number");
-    }
-
-    this.numberOfChannels = numberOfChannels;
+  public SmartTv(int channelCount) {
     isTvOn = false;
+    setChannelCount(channelCount);
     currentChannel = 1;
+  }
+
+  public SmartTv(int channelCount, SmartTvSubscriber initialSubscriber) {
+    this(channelCount);
+    addSubscriber(initialSubscriber);
+  }
+
+  public void addSubscriber(SmartTvSubscriber subscriber) {
+    subscribers.add(subscriber);
+    subscriber.handleTvState(isTvOn);
+    subscriber.handleChannelCount(channelCount);
+    subscriber.handleCurrentChannel(currentChannel);
   }
 
   /**
@@ -30,6 +42,7 @@ public class SmartTv {
    */
   public void turnOn() {
     isTvOn = true;
+    notifySubscribersOfTvState();
   }
 
   /**
@@ -37,6 +50,15 @@ public class SmartTv {
    */
   public void turnOff() {
     isTvOn = false;
+    notifySubscribersOfTvState();
+  }
+
+  public void setChannelCount(int channelCount) throws IllegalArgumentException{
+    if (channelCount < 1) {
+      throw new IllegalArgumentException("Number of channels must be a positive number");
+    }
+    this.channelCount = channelCount;
+    notifySubscribersOfChannelCount();
   }
 
   /**
@@ -51,10 +73,11 @@ public class SmartTv {
     if (!isTvOn) {
       throw new IllegalStateException(ERR_MUST_BE_ON);
     }
-    if (channel < 1 || channel > numberOfChannels) {
-      throw new IllegalArgumentException("Channel must be between 1 and " + numberOfChannels);
+    if (channel < 1 || channel > channelCount) {
+      throw new IllegalArgumentException("Channel must be between 1 and " + channelCount);
     }
     currentChannel = channel;
+    notifySubscribersOfCurrentChannel();
   }
 
   /**
@@ -63,11 +86,11 @@ public class SmartTv {
    * @return The number of channels
    * @throws IllegalStateException If the TV is off
    */
-  public int getChannelCount() {
+  public int getChannelCount() throws IllegalStateException {
     if (!isTvOn) {
       throw new IllegalStateException(ERR_MUST_BE_ON);
     }
-    return numberOfChannels;
+    return channelCount;
   }
 
   /**
@@ -77,7 +100,7 @@ public class SmartTv {
    * @return The current channel number
    * @throws IllegalStateException If the TV is off
    */
-  public int getCurrentChannel() {
+  public int getCurrentChannel() throws IllegalStateException {
     if (!isTvOn) {
       throw new IllegalStateException(ERR_MUST_BE_ON);
     }
@@ -91,5 +114,23 @@ public class SmartTv {
    */
   public boolean isTvOn() {
     return isTvOn;
+  }
+
+  private void notifySubscribersOfTvState() {
+    for (SmartTvSubscriber subscriber : subscribers) {
+      subscriber.handleTvState(isTvOn);
+    }
+  }
+
+  private void notifySubscribersOfChannelCount() {
+    for (SmartTvSubscriber subscriber : subscribers) {
+      subscriber.handleChannelCount(channelCount);
+    }
+  }
+
+  private void notifySubscribersOfCurrentChannel() {
+    for (SmartTvSubscriber subscriber : subscribers) {
+      subscriber.handleCurrentChannel(currentChannel);
+    }
   }
 }

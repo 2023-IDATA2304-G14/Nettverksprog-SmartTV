@@ -3,7 +3,7 @@ package no.ntnu.message;
 /**
  * A message telling whether the TV is ON or off.
  */
-public class TvStateMessage implements Message {
+public class TvStateMessage implements BroadcastMessage {
     private final boolean isOn;
 
     /**

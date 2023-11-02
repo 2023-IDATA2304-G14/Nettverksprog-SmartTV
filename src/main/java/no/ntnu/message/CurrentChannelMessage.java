@@ -3,7 +3,7 @@ package no.ntnu.message;
 /**
  * A message reporting the current channel of a TV.
  */
-public class CurrentChannelMessage implements Message{
+public class CurrentChannelMessage implements BroadcastMessage {
     private final int channel;
 
     /**

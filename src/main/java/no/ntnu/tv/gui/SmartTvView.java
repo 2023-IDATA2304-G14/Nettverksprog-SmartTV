@@ -1,6 +1,7 @@
 package no.ntnu.tv.gui;
 
 import javafx.stage.Stage;
+import no.ntnu.tv.TvServer;
 
 public class SmartTvView {
   final SmartTvModel model;

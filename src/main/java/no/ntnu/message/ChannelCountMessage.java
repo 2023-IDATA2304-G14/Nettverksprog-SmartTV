@@ -3,7 +3,7 @@ package no.ntnu.message;
 /**
  * A message containing the number of channels for the TV.
  */
-public class ChannelCountMessage implements Message {
+public class ChannelCountMessage implements BroadcastMessage {
     private final int channelCount;
     public ChannelCountMessage(int channelCount) {
         this.channelCount = channelCount;

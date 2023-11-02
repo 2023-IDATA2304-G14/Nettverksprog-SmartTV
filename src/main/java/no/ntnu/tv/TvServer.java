@@ -1,109 +1,89 @@
 package no.ntnu.tv;
 
-import no.ntnu.message.Command;
 import no.ntnu.message.Message;
-import no.ntnu.message.MessageSerializer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TvServer {
   public static final String DEFAULT_HOSTNAME = "localhost";
   public static final int DEFAULT_PORT = 12345;
   private final SmartTv smartTv;
-  private boolean isServerRunning;
-  private ServerSocket listeningSocket;
-  private Socket clientSocket;
-  private BufferedReader socketReader;
-  private PrintWriter socketWriter;
   private int port;
-  private boolean useCustomPort;
+  boolean isServerRunning;
+  private final List<ClientHandler> connectedClients = new ArrayList<>();
 
   public TvServer(SmartTv smartTv) {
-    this.smartTv = smartTv;
-    startServer();
+    this(smartTv, DEFAULT_PORT);
   }
 
   public TvServer(SmartTv smartTv, int port) {
-    this.port = port;
-    this.useCustomPort = true;
+    if (smartTv == null) {
+      throw new IllegalArgumentException("SmartTv cannot be null");
+    }
+    if (port < 0 || port > 65535) {
+      throw new IllegalArgumentException("Invalid port number: " + port);
+    }
+
     this.smartTv = smartTv;
+    this.port = port;
     startServer();
   }
 
   private void startServer() {
-    listeningSocket = openListeningSocket();
+    ServerSocket listeningSocket = openListeningSocket();
     System.out.println("Server listening on port " + DEFAULT_PORT);
     if (listeningSocket != null) {
       isServerRunning = true;
       while (isServerRunning) {
-        clientSocket = acceptNextClientConnection(listeningSocket);
-        if (clientSocket != null) {
-          System.out.println("New client connected from " + clientSocket.getRemoteSocketAddress());
-          handleClient(clientSocket);
+        ClientHandler clientHandler = acceptNextClientConnection(listeningSocket);
+        if (clientHandler != null) {
+          connectedClients.add(clientHandler);
+          clientHandler.start();
         }
       }
     }
   }
 
-  private void handleClient(Socket clientSocket) {
-    Message response;
-    do {
-      Command clientCommand = readClientRequest();
-      System.out.println("Received from client: " + clientCommand);
-      response = clientCommand.execute(smartTv);
-      if (response != null) {
-        sendResponseToClient(response);
-      }
-    } while (response != null);
-  }
-
-  private void sendResponseToClient(Message response) {
-    String serializedResponse = MessageSerializer.serialize(response);
-    socketWriter.println(serializedResponse);
-  }
-
-  private Command readClientRequest() {
-    Message clientCommand = null;
-    try {
-      String rawClientRequest = socketReader.readLine();
-      clientCommand = MessageSerializer.deserialize(rawClientRequest);
-      if (!(clientCommand instanceof Command)) {
-        System.err.println("Received invalid request from client: " + clientCommand);
-        clientCommand = null;
-      }
-    } catch (IOException e) {
-      System.err.println("Could not read from client socket: " + e.getMessage());
+  public void broadcastMessage(Message response) {
+    for (ClientHandler client : connectedClients) {
+      client.sendResponseToClient(response);
     }
-    return (Command) clientCommand;
   }
 
-  private Socket acceptNextClientConnection(ServerSocket listeningSocket) {
-    Socket clientSocket = null;
+  private ClientHandler acceptNextClientConnection(ServerSocket listeningSocket) {
+    ClientHandler clientHandler = null;
     try {
-      clientSocket = listeningSocket.accept();
-      socketReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-      socketWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-
+      Socket clientSocket = listeningSocket.accept();
+      System.out.println("New client connected from " + clientSocket.getRemoteSocketAddress());
+      clientHandler = new ClientHandler(clientSocket, this);
     } catch (IOException e) {
       System.err.println("Could not accept client connection: " + e.getMessage());
     }
-    return clientSocket;
+    return clientHandler;
   }
 
   private ServerSocket openListeningSocket() {
     ServerSocket listeningSocket = null;
-    port = useCustomPort ? port : DEFAULT_PORT;
     try {
       listeningSocket = new ServerSocket(port);
     } catch (IOException e) {
       System.err.println("Could not open server socket: " + e.getMessage());
     }
     return listeningSocket;
+  }
+  public void stopServer() {
+    isServerRunning = false;
+    for (ClientHandler client : connectedClients) {
+      client.close();
+    }
+  }
+
+  public void removeClient(ClientHandler client) {
+    connectedClients.remove(client);
   }
 
   public SmartTv getSmartTv() {
