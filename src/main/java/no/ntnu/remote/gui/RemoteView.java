@@ -127,13 +127,12 @@ public class RemoteView {
         Node loginButton = dialog.getDialogPane().lookupButton(selectButtonType);
         loginButton.setDisable(true);
 
-//        TODO: Make this into two separate listeners
         ip.textProperty().addListener(((observableValue, s, t1) -> {
-            if(!t1.trim().isEmpty()){
-                port.textProperty().addListener(((observableValue2, s2, t2) -> {
-                    loginButton.setDisable(t2.trim().isEmpty());
-                }));
-            }
+            loginButton.setDisable(t1.trim().isEmpty() || port.getText().trim().isEmpty());
+        }));
+
+        port.textProperty().addListener(((observableValue2, s2, t2) -> {
+            loginButton.setDisable(t2.trim().isEmpty() || ip.getText().trim().isEmpty());
         }));
 
 
