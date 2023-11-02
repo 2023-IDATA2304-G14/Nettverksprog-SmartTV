@@ -50,7 +50,7 @@ public class RemoteModel implements RemoteClientListener {
    * @param port The port of the host
    * @throws RuntimeException Throws a RuntimeException if they are an exception
    */
-    public void newClient(String host, int port) throws RuntimeException{
+    public void newClient(String host, int port) throws RuntimeException {
       removeClient();
       client = new RemoteClient(host, port, this);
     }
@@ -140,4 +140,8 @@ public class RemoteModel implements RemoteClientListener {
       client.sendCommand(setChannelCommand);
 //      TODO: Add errorhandling
     }
+
+  public void reconnect() {
+    client.reconnect();
+  }
 }

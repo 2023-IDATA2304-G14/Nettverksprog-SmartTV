@@ -55,6 +55,7 @@ public class SmartTv {
 
   public void setChannelCount(int channelCount) throws IllegalArgumentException{
     if (channelCount < 1) {
+      System.err.println("Channel count: " + channelCount);
       throw new IllegalArgumentException("Number of channels must be a positive number");
     }
     this.channelCount = channelCount;

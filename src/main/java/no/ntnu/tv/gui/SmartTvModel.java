@@ -1,5 +1,6 @@
 package no.ntnu.tv.gui;
 
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.*;
 import no.ntnu.tv.SmartTv;
@@ -7,6 +8,10 @@ import no.ntnu.tv.SmartTvSubscriber;
 import no.ntnu.tv.TvServer;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static javafx.application.Platform.runLater;
 
 public class SmartTvModel implements SmartTvSubscriber {
 
@@ -16,17 +21,42 @@ public class SmartTvModel implements SmartTvSubscriber {
   private final IntegerProperty currentChannel = new SimpleIntegerProperty(0);
   private TvServer tvServer;
   private SmartTv smartTv;
+  private ExecutorService serverExecutor;
 
   public void newConfig(int numberOfChannels, int port) throws IllegalArgumentException, IOException {
     removeServer();
     smartTv = new SmartTv(numberOfChannels, this);
     tvServer = new TvServer(smartTv, port);
+
+    startServer();
   }
 
   public void newConfig(int numberOfChannels) throws IllegalArgumentException, IOException {
     removeServer();
     smartTv = new SmartTv(numberOfChannels, this);
     tvServer = new TvServer(smartTv);
+
+    startServer();
+  }
+
+  private void startServer() {
+    serverExecutor = Executors.newSingleThreadExecutor();
+    serverExecutor.execute(() -> {
+      try {
+        tvServer.startServer();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    });
+    runLater(() -> this.port.set(tvServer.getPort()));
+  }
+
+  public void restartServer() throws IOException {
+    int channelCount = tvServer.getSmartTv().getChannelCount();
+    int port = tvServer.getPort();
+
+    removeServer();
+    newConfig(channelCount, port);
   }
 
   public void removeServer() {
@@ -37,17 +67,17 @@ public class SmartTvModel implements SmartTvSubscriber {
 
   @Override
   public void handleTvState(boolean isOn) {
-    this.isOn.set(isOn);
+    Platform.runLater(() -> this.isOn.set(isOn));
   }
 
   @Override
   public void handleChannelCount(int channel) {
-    this.channelCount.set(channel);
+    Platform.runLater(() -> this.channelCount.set(channel));
   }
 
   @Override
   public void handleCurrentChannel(int channel) {
-    this.currentChannel.set(channel);
+    Platform.runLater(() -> this.currentChannel.set(channel));
   }
 
   public IntegerProperty getPortProperty() {

@@ -69,6 +69,8 @@ public class ClientHandler extends Thread {
 
   public void close() {
     try {
+      socketReader.close();
+      socketWriter.close();
       clientSocket.close();
     } catch (IOException e) {
       System.err.println("Could not close client socket: " + e.getMessage());

@@ -19,6 +19,9 @@ public class RemoteClient {
   private Socket socket;
   private BufferedReader socketReader;
   private PrintWriter socketWriter;
+  private final String host;
+  private final int port;
+  private final RemoteClientListener listener;
 
   /**
    * Construct a remote client with default hostname and port.
@@ -38,10 +41,13 @@ public class RemoteClient {
    * @throws RuntimeException Throws a RuntimeException if there is an error.
    */
   public RemoteClient(String host, int port, RemoteClientListener listener) throws RuntimeException {
+    this.host = host;
+    this.port = port;
+    this.listener = listener;
     if (!startClient(host, port)) {
           throw new RuntimeException("Could not connect to server");
     }
-    startListeningThread(listener);
+    startListeningThread();
   }
 
   /**
@@ -65,10 +71,9 @@ public class RemoteClient {
   /**
    * Starts a listening thread that listens for responses from the server.
    *
-   * @param listener the listener that will be notified when a response is received.
    * #see RemoteClientListener
    */
-    private void startListeningThread(RemoteClientListener listener) {
+    private void startListeningThread() {
         new Thread(() -> {
           Message message = null;
             do {
@@ -129,7 +134,9 @@ public class RemoteClient {
    */
     public void stopClient() {
         try {
+          if (socket != null) {
             socket.close();
+          }
             socket = null;
             socketReader = null;
             socketWriter = null;
@@ -137,4 +144,12 @@ public class RemoteClient {
             System.out.println("Error closing socket: " + e.getMessage());
         }
     }
+
+  public void reconnect() throws RuntimeException {
+    stopClient();
+    if (!startClient(host, port)) {
+      throw new RuntimeException("Could not connect to server");
+    }
+    startListeningThread();
+  }
 }

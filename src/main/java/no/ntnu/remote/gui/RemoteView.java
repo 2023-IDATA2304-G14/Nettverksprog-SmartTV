@@ -29,16 +29,8 @@ import java.util.Optional;
  */
 
 public class RemoteView {
-    private Button powerOnButton;
-    private Button powerOffButton;
-    private Button channelUpButton;
-    private Button channelDownButton;
-    private Button setChannelButton;
-    private TextField channelField;
-    private TextArea responseArea;
-    private RemoteController remoteController;
-    private RemoteModel remoteModel;
-
+    private final RemoteController remoteController;
+    private final RemoteModel remoteModel;
 
     /**
      * Constructor of the RemoteView. Initialize the scene and connect the view to the model
@@ -66,21 +58,19 @@ public class RemoteView {
         mainPanel.setVgap(10);
         mainPanel.setHgap(10);
 
-        powerOnButton = new Button("Turn On");
-        powerOffButton = new Button("Turn Off");
-        channelUpButton = new Button("Channel Up");
-        channelDownButton = new Button("Channel Down");
-        setChannelButton = new Button("Set Channel");
-        channelField = new TextField();
+        Button powerOnButton = new Button("Turn On");
+        Button powerOffButton = new Button("Turn Off");
+        Button channelUpButton = new Button("Channel Up");
+        Button channelDownButton = new Button("Channel Down");
+        Button reconnectButton = new Button("Reconnect to server");
 
         mainPanel.add(powerOnButton, 0, 0);
         mainPanel.add(powerOffButton, 1, 0);
         mainPanel.add(channelUpButton, 0, 1);
         mainPanel.add(channelDownButton, 1, 1);
-        mainPanel.add(setChannelButton, 0, 2);
-        mainPanel.add(channelField, 1, 2);
+        mainPanel.add(reconnectButton, 0, 2);
 
-        responseArea = new TextArea();
+        TextArea responseArea = new TextArea();
         responseArea.setEditable(false);
 
         root.setCenter(mainPanel);
@@ -96,6 +86,7 @@ public class RemoteView {
         powerOffButton.setOnAction(e -> remoteController.turnOffTV());
         channelUpButton.setOnAction(e -> remoteController.channelUp());
         channelDownButton.setOnAction(e -> remoteController.channelDown());
+        reconnectButton.setOnAction(e -> remoteController.reconnect());
     }
 
     /**
@@ -145,7 +136,7 @@ public class RemoteView {
 
         dialog.getDialogPane().setContent(grid);
 
-        Platform.runLater(() -> ip.requestFocus());
+        Platform.runLater(ip::requestFocus);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == selectButtonType) {
@@ -157,8 +148,8 @@ public class RemoteView {
         Optional<Pair<String, String>> result = dialog.showAndWait();
 
         result.ifPresent(ipPort -> {
-            remoteModel.newClient(ipPort.getKey(), Integer.parseInt(ipPort.getValue()));
-            System.out.println("ip=" + ipPort.getKey() + ", port=" + ipPort.getValue());
+            remoteModel.newClient(ipPort.getKey().trim(), Integer.parseInt(ipPort.getValue().trim()));
+            System.out.println("ip=" + ipPort.getKey().trim() + ", port=" + ipPort.getValue().trim());
         });
     }
 

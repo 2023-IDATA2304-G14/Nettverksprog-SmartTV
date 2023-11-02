@@ -5,4 +5,12 @@ public class SmartTvController {
   public SmartTvController(SmartTvModel model) {
     this.model = model;
   }
+
+  public void restartServer() {
+    try {
+      model.restartServer();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }

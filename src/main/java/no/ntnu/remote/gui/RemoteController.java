@@ -49,4 +49,8 @@ public class RemoteController {
     public void channelDown() {
         model.channelDown();
     }
+
+  public void reconnect() {
+    model.reconnect();
+  }
 }

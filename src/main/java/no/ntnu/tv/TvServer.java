@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class TvServer {
@@ -15,6 +16,7 @@ public class TvServer {
   private int port;
   boolean isServerRunning;
   private final List<ClientHandler> connectedClients = new ArrayList<>();
+  private ServerSocket serverSocket;
 
   public TvServer(SmartTv smartTv) throws IllegalArgumentException, IOException {
     this(smartTv, DEFAULT_PORT);
@@ -30,15 +32,14 @@ public class TvServer {
 
     this.smartTv = smartTv;
     this.port = port;
-    startServer();
   }
 
-  private void startServer() throws IOException {
-    ServerSocket listeningSocket = openListeningSocket();
-    System.out.println("Server listening on port " + DEFAULT_PORT);
+  public void startServer() throws IOException {
+    serverSocket = openListeningSocket();
+    System.out.println("Server listening on port " + port);
     isServerRunning = true;
     while (isServerRunning) {
-      ClientHandler clientHandler = acceptNextClientConnection(listeningSocket);
+      ClientHandler clientHandler = acceptNextClientConnection(serverSocket);
       if (clientHandler != null) {
         connectedClients.add(clientHandler);
         clientHandler.start();
@@ -67,12 +68,21 @@ public class TvServer {
   private ServerSocket openListeningSocket() throws IOException {
     ServerSocket listeningSocket = null;
     listeningSocket = new ServerSocket(port);
+    port = listeningSocket.getLocalPort();
     return listeningSocket;
   }
   public void stopServer() {
     isServerRunning = false;
-    for (ClientHandler client : connectedClients) {
-      client.close();
+    Iterator<ClientHandler> iterator = connectedClients.iterator();
+    while (iterator.hasNext()) {
+      ClientHandler clientHandler = iterator.next();
+      clientHandler.close();
+      iterator.remove();
+    }
+    try {
+      serverSocket.close();
+    } catch (IOException e) {
+      System.err.println("Could not close server socket: " + e.getMessage());
     }
   }
 
@@ -82,5 +92,9 @@ public class TvServer {
 
   public SmartTv getSmartTv() {
     return smartTv;
+  }
+
+  public int getPort() {
+    return port;
   }
 }

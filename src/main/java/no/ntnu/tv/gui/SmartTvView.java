@@ -1,16 +1,21 @@
 package no.ntnu.tv.gui;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import no.ntnu.tv.TvServer;
+
+import java.util.Optional;
 
 public class SmartTvView {
   private final SmartTvModel model;
@@ -83,18 +88,88 @@ public class SmartTvView {
     model.getIsOnProperty().addListener(new WeakChangeListener<>(powerListener));
     power.setText(Boolean.TRUE.equals(model.getIsOnProperty().getValue()) ? "On" : "Off");
 
-    vBox.getChildren().addAll(portBox, currentChannelBox, channelCountBox, powerBox);
+    Button restartServerButton = new Button("Restart server");
+    restartServerButton.setOnAction(event -> {
+      controller.restartServer();
+    });
+
+    vBox.getChildren().addAll(portBox, currentChannelBox, channelCountBox, powerBox, restartServerButton);
 
     Scene scene = new Scene(root, 400, 300);
     stage.setScene(scene);
     stage.show();
+
+    showConfigDialog();
   }
 
-  public void showConfig() {
+  public void showConfigDialog() {
+    Dialog<Pair<String, String>> dialog = new Dialog<>();
+    dialog.setTitle("Select TV");
+    dialog.setHeaderText("Please enter the Port of the TV and wanted channelCount");
 
+    ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+    dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+    GridPane grid = new GridPane();
+    grid.setHgap(10);
+    grid.setVgap(10);
+    grid.setPadding(new Insets(20,150,10,10));
+
+    TextField portField = new TextField();
+    portField.setPromptText("1-65535");
+    TextField channelCountField = new TextField();
+    channelCountField.setPromptText("1-" + Integer.MAX_VALUE);
+
+
+
+    grid.add(new Label("Port number (\"0\" for auto, \"\" for default):"), 0, 0);
+    grid.add(portField, 1, 0);
+    grid.add(new Label("Channel count:"), 0, 1);
+    grid.add(channelCountField, 1, 1);
+
+    Node saveButton = dialog.getDialogPane().lookupButton(saveButtonType);
+    saveButton.setDisable(true);
+
+    ChangeListener<String> channelCountTextFieldListener = (observableValue, s, t1) -> {
+      saveButton.setDisable(t1.trim().isEmpty());
+    };
+
+//    portField.textProperty().addListener(new WeakChangeListener<>(portTextFieldListener));
+
+    channelCountField.textProperty().addListener(new WeakChangeListener<>(channelCountTextFieldListener));
+
+    dialog.getDialogPane().setContent(grid);
+
+    Platform.runLater(portField::requestFocus);
+
+    dialog.setResultConverter(dialogButton -> {
+      if (dialogButton == saveButtonType) {
+        return new Pair<>(portField.getText(), channelCountField.getText());
+      }
+      return null;
+    });
+
+    Optional<Pair<String, String>> result = dialog.showAndWait();
+
+    result.ifPresent(resultPair -> {
+      try {
+        boolean isDefaultPort = resultPair.getKey().trim().isEmpty();
+        int port = Integer.parseInt(resultPair.getKey().trim());
+        int channelCount = Integer.parseInt(resultPair.getValue().trim());
+
+        System.out.println("Port: " + port);
+        System.out.println("Channel count: " + channelCount);
+
+        if (isDefaultPort) {
+          model.newConfig(channelCount);
+        } else {
+          model.newConfig(channelCount, port);
+        }
+      } catch (Exception e) {
+//        TODO: Show error dialog
+        e.printStackTrace();
+      }
+    });
   }
 
-  public void showTv() {
-
-  }
 }
