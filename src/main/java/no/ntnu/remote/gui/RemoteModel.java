@@ -1,12 +1,16 @@
 package no.ntnu.remote.gui;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import no.ntnu.remote.RemoteClientListener;
 
 public class RemoteModel implements RemoteClientListener {
   private RemoteView view;
-  private Boolean isOn = false;
-  private int channelCount = 0;
-  private int currentChannel = 0;
+  private final BooleanProperty isOn = new SimpleBooleanProperty();
+  private final IntegerProperty channelCount = new SimpleIntegerProperty();
+  private final IntegerProperty currentChannel = new SimpleIntegerProperty();
 
     public RemoteModel(RemoteView view) {
         this.view = view;
@@ -14,17 +18,17 @@ public class RemoteModel implements RemoteClientListener {
 
     @Override
     public void handleTvState(boolean isOn) {
-        this.isOn = isOn;
+        this.isOn.set(isOn);
     }
 
     @Override
     public void handleChannelCount(int channelCount) {
-        this.channelCount = channelCount;
+        this.channelCount.set(channelCount);
     }
 
     @Override
     public void handleCurrentChannel(int channel) {
-        this.currentChannel = channel;
+        this.currentChannel.set(channel);
     }
 
     @Override
