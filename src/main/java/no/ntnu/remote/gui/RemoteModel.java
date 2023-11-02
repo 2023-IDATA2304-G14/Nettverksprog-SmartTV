@@ -12,7 +12,7 @@ import no.ntnu.remote.RemoteClient;
 import no.ntnu.remote.RemoteClientListener;
 
 public class RemoteModel implements RemoteClientListener {
-  private RemoteView view;
+  private final RemoteView view;
   private final BooleanProperty isOn = new SimpleBooleanProperty();
   private final IntegerProperty channelCount = new SimpleIntegerProperty();
   private final IntegerProperty currentChannel = new SimpleIntegerProperty();
@@ -22,7 +22,7 @@ public class RemoteModel implements RemoteClientListener {
         this.view = view;
     }
 
-    private void removeClient() {
+    public void removeClient() {
       if (client != null)
         client.stopClient();
     }
@@ -49,6 +49,7 @@ public class RemoteModel implements RemoteClientListener {
 
     @Override
     public void handleErrorMessage(String message) {
+//      TODO: Implement this
 //        view.showError(message);
     }
 
