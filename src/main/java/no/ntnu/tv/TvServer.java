@@ -16,11 +16,11 @@ public class TvServer {
   boolean isServerRunning;
   private final List<ClientHandler> connectedClients = new ArrayList<>();
 
-  public TvServer(SmartTv smartTv) {
+  public TvServer(SmartTv smartTv) throws IllegalArgumentException, IOException {
     this(smartTv, DEFAULT_PORT);
   }
 
-  public TvServer(SmartTv smartTv, int port) {
+  public TvServer(SmartTv smartTv, int port) throws IllegalArgumentException, IOException {
     if (smartTv == null) {
       throw new IllegalArgumentException("SmartTv cannot be null");
     }
@@ -33,17 +33,15 @@ public class TvServer {
     startServer();
   }
 
-  private void startServer() {
+  private void startServer() throws IOException {
     ServerSocket listeningSocket = openListeningSocket();
     System.out.println("Server listening on port " + DEFAULT_PORT);
-    if (listeningSocket != null) {
-      isServerRunning = true;
-      while (isServerRunning) {
-        ClientHandler clientHandler = acceptNextClientConnection(listeningSocket);
-        if (clientHandler != null) {
-          connectedClients.add(clientHandler);
-          clientHandler.start();
-        }
+    isServerRunning = true;
+    while (isServerRunning) {
+      ClientHandler clientHandler = acceptNextClientConnection(listeningSocket);
+      if (clientHandler != null) {
+        connectedClients.add(clientHandler);
+        clientHandler.start();
       }
     }
   }
@@ -66,13 +64,9 @@ public class TvServer {
     return clientHandler;
   }
 
-  private ServerSocket openListeningSocket() {
+  private ServerSocket openListeningSocket() throws IOException {
     ServerSocket listeningSocket = null;
-    try {
-      listeningSocket = new ServerSocket(port);
-    } catch (IOException e) {
-      System.err.println("Could not open server socket: " + e.getMessage());
-    }
+    listeningSocket = new ServerSocket(port);
     return listeningSocket;
   }
   public void stopServer() {
