@@ -1,14 +1,18 @@
 package no.ntnu;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import no.ntnu.remote.gui.RemoteController;
 import no.ntnu.remote.gui.RemoteModel;
 import no.ntnu.remote.gui.RemoteView;
 
-public class RemoteApp {
+public class RemoteApp extends Application {
     public static void main(String[] args) {
-//        RemoteControl model = new RemoteControl();
-        RemoteView view = new RemoteView();
-        RemoteModel model = new RemoteModel(view);
-        RemoteController controller = new RemoteController(model, view);
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        new RemoteView(primaryStage);
     }
 }
