@@ -14,6 +14,8 @@
 
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
         <maven.surefire.plugin.version>3.0.0-M7</maven.surefire.plugin.version>
+        <application.main>no.ntnu.RemoteApp</application.main>
+        <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
     </properties>
 
     <dependencies>
@@ -47,6 +49,14 @@
                 <configuration>
                     <source>16</source>
                     <target>16</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>${javafx.maven.plugin.version}</version>
+                <configuration>
+                    <mainClass>${application.main}</mainClass>
                 </configuration>
             </plugin>
         </plugins>

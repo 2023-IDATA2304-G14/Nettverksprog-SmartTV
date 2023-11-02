@@ -45,7 +45,7 @@ public class RemoteModel implements RemoteClientListener {
 
     @Override
     public void handleErrorMessage(String message) {
-        view.showError(message);
+        //view.showError(message);
     }
 
     public void turnOnTV() {
