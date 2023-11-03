@@ -1,5 +1,8 @@
 package no.ntnu.message;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class MessageSerializer {
 
   public static final String TV_STATE_COMMAND = "state";
@@ -9,13 +12,17 @@ public class MessageSerializer {
   public static final String TURN_OFF_COMMAND = "off";
   public static final String SET_CHANNEL_COMMAND_PREFIX = "set ";
   private static final String SET_CHANNEL_COMMAND_REGEX = "set\\s+(\\d+)";
+  private static final Pattern SET_CHANNEL_COMMAND_REGEX_PATTERN = Pattern.compile(SET_CHANNEL_COMMAND_REGEX);
 
   public static final String CHANNEL_COUNT_RESPONSE_PREFIX = "Count ";
   public static final String CHANNEL_COUNT_RESPONSE_REGEX = "Count\\s+(\\d+)";
+  public static final Pattern CHANNEL_COUNT_RESPONSE_REGEX_PATTERN = Pattern.compile(CHANNEL_COUNT_RESPONSE_REGEX);
   public static final String CURRENT_CHANNEL_RESPONSE_PREFIX = "Channel ";
   public static final String CURRENT_CHANNEL_RESPONSE_REGEX = "Channel\\s+(\\d+)";
+  public static final Pattern CURRENT_CHANNEL_RESPONSE_REGEX_PATTERN = Pattern.compile(CURRENT_CHANNEL_RESPONSE_REGEX);
   public static final String ERROR_MESSAGE_PREFIX = "Error: ";
   public static final String ERROR_MESSAGE_REGEX = "Error:\\s+(.+)";
+  public static final Pattern ERROR_MESSAGE_REGEX_PATTERN = Pattern.compile(ERROR_MESSAGE_REGEX);
   public static final String TV_STATE_ON = "TVOn";
   public static final String TV_STATE_OFF = "TVOff";
   private static final String SINGLE_PARAMETER_COMMAND_REGEX = "^[a-zA-Z0-9]+$";
@@ -77,14 +84,19 @@ public class MessageSerializer {
   }
 
   private static Message deserializeParameterizedCommand(String message) {
-    if (message.matches(SET_CHANNEL_COMMAND_REGEX)) {
-      return new SetChannelCommand(Integer.parseInt(message.substring(4)));
-    } else if (message.matches(CURRENT_CHANNEL_RESPONSE_REGEX)) {
-      return new CurrentChannelMessage(Integer.parseInt(message.substring(8)));
-    } else if (message.matches(CHANNEL_COUNT_RESPONSE_REGEX)) {
-      return new ChannelCountMessage(Integer.parseInt(message.substring(6)));
-    } else if (message.matches(ERROR_MESSAGE_REGEX)) {
-      return new ErrorMessage(message.substring(7));
+    Matcher setChannelCommandMatcher = SET_CHANNEL_COMMAND_REGEX_PATTERN.matcher(message);
+    Matcher currentChannelResponseMatcher = CURRENT_CHANNEL_RESPONSE_REGEX_PATTERN.matcher(message);
+    Matcher channelCountResponseMatcher = CHANNEL_COUNT_RESPONSE_REGEX_PATTERN.matcher(message);
+    Matcher errorMessageMatcher = ERROR_MESSAGE_REGEX_PATTERN.matcher(message);
+
+    if (setChannelCommandMatcher.matches()) {
+      return new SetChannelCommand(Integer.parseInt(setChannelCommandMatcher.group(1)));
+    } else if (currentChannelResponseMatcher.matches()) {
+      return new CurrentChannelMessage(Integer.parseInt(currentChannelResponseMatcher.group(1)));
+    } else if (channelCountResponseMatcher.matches()) {
+      return new ChannelCountMessage(Integer.parseInt(channelCountResponseMatcher.group(1)));
+    } else if (errorMessageMatcher.matches()) {
+      return new ErrorMessage(errorMessageMatcher.group(1));
     } else {
       throw new IllegalArgumentException("Unknown command: " + message);
     }
