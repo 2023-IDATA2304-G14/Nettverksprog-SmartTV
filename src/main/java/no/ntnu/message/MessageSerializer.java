@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MessageSerializer {
-
   public static final String TV_STATE_COMMAND = "state";
   public static final String CHANNEL_COUNT_COMMAND = "count";
   public static final String CURRENT_CHANNEL_COMMAND = "current";
@@ -26,6 +25,10 @@ public class MessageSerializer {
   public static final String TV_STATE_ON = "TVOn";
   public static final String TV_STATE_OFF = "TVOff";
   private static final String SINGLE_PARAMETER_COMMAND_REGEX = "^[a-zA-Z0-9]+$";
+  private static final String UNKNOWN_COMMAND_PREFIX = "Unknown command: ";
+
+  private MessageSerializer() {
+  }
   public static String serialize(Message message) {
     if (message == null) {
       throw new IllegalArgumentException("Message cannot be null");
@@ -51,7 +54,7 @@ public class MessageSerializer {
     } else if (message instanceof TvStateMessage tvStateMessage) {
       return tvStateMessage.isOn() ? TV_STATE_ON : TV_STATE_OFF;
     } else {
-      throw new IllegalArgumentException("Unknown command: " + message);
+      throw new IllegalArgumentException(UNKNOWN_COMMAND_PREFIX + message);
     }
   }
 
@@ -76,7 +79,7 @@ public class MessageSerializer {
         case TV_STATE_OFF:
           return new TvStateMessage(false);
         default:
-          throw new IllegalArgumentException("Unknown command: " + message);
+          throw new IllegalArgumentException(UNKNOWN_COMMAND_PREFIX + message);
       }
     } else {
       return deserializeParameterizedCommand(message);
@@ -98,7 +101,7 @@ public class MessageSerializer {
     } else if (errorMessageMatcher.matches()) {
       return new ErrorMessage(errorMessageMatcher.group(1));
     } else {
-      throw new IllegalArgumentException("Unknown command: " + message);
+      throw new IllegalArgumentException(UNKNOWN_COMMAND_PREFIX + message);
     }
   }
 }

@@ -87,18 +87,21 @@ public class TvServer {
   }
   public void stopServer() {
     isServerRunning = false;
-    List<ClientHandler> clientsCopy = new ArrayList<>(connectedClients);
 
-    ExecutorService executor = Executors.newFixedThreadPool(clientsCopy.size());
+    if (!connectedClients.isEmpty()) {
+      List<ClientHandler> clientsCopy = new ArrayList<>(connectedClients);
 
-    for (ClientHandler clientHandler : clientsCopy) {
-      executor.execute(() -> {
-        clientHandler.close();
-        connectedClients.remove(clientHandler);
-      });
+      ExecutorService executor = Executors.newFixedThreadPool(clientsCopy.size());
+
+      for (ClientHandler clientHandler : clientsCopy) {
+        executor.execute(() -> {
+          clientHandler.close();
+          connectedClients.remove(clientHandler);
+        });
+      }
+
+      executor.shutdown();
     }
-
-    executor.shutdown();
 
     try {
       serverSocket.close();

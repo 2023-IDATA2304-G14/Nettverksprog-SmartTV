@@ -1,7 +1,6 @@
 package no.ntnu.tv.gui;
 
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.property.*;
 import no.ntnu.tv.SmartTv;
 import no.ntnu.tv.SmartTvSubscriber;
@@ -22,7 +21,6 @@ public class SmartTvModel implements SmartTvSubscriber {
   private final IntegerProperty currentChannel = new SimpleIntegerProperty(0);
   private TvServer tvServer;
   private SmartTv smartTv;
-  private ExecutorService serverExecutor;
 
   public void newConfig(int numberOfChannels, int port) throws IllegalArgumentException, IOException {
     removeServer();
@@ -42,7 +40,7 @@ public class SmartTvModel implements SmartTvSubscriber {
 
   private void startServer() {
     CountDownLatch portAssigned = new CountDownLatch(1);
-    serverExecutor = Executors.newSingleThreadExecutor();
+    ExecutorService serverExecutor = Executors.newSingleThreadExecutor();
     serverExecutor.execute(() -> {
       try {
         tvServer.startServer(portAssigned);
