@@ -2,10 +2,7 @@ package no.ntnu.remote.gui;
 
 import javafx.application.Platform;
 import javafx.beans.property.*;
-import no.ntnu.message.Command;
-import no.ntnu.message.SetChannelCommand;
-import no.ntnu.message.TurnOffCommand;
-import no.ntnu.message.TurnOnCommand;
+import no.ntnu.message.*;
 import no.ntnu.remote.RemoteClient;
 import no.ntnu.remote.RemoteClientListener;
 
@@ -23,6 +20,7 @@ public class RemoteModel implements RemoteClientListener {
   private final IntegerProperty currentChannel = new SimpleIntegerProperty();
   private final StringProperty host = new SimpleStringProperty();
   private final IntegerProperty port = new SimpleIntegerProperty();
+  private final StringProperty errorMessage = new SimpleStringProperty();
 
   private RemoteClient client;
 
@@ -46,6 +44,19 @@ public class RemoteModel implements RemoteClientListener {
       client = new RemoteClient(host, port, this);
       this.host.set(host);
       this.port.set(port);
+      getInitialState();
+    }
+
+    public void getInitialState() {
+      Command getTvStateCommand = new TvStateCommand();
+      client.sendCommand(getTvStateCommand);
+    }
+
+    public void getChannelDetails() {
+      Command getChannelCountCommand = new ChannelCountCommand();
+      client.sendCommand(getChannelCountCommand);
+      Command getCurrentChannelCommand = new CurrentChannelCommand();
+      client.sendCommand(getCurrentChannelCommand);
     }
 
   /**
@@ -55,7 +66,13 @@ public class RemoteModel implements RemoteClientListener {
    */
   @Override
     public void handleTvState(boolean isOn) {
-      Platform.runLater(() -> this.isOn.set(isOn));
+      Platform.runLater(() -> {
+        clearErrorMessage();
+        this.isOn.set(isOn);
+      });
+      if (isOn) {
+        getChannelDetails();
+      }
     }
 
   /**
@@ -65,7 +82,10 @@ public class RemoteModel implements RemoteClientListener {
    */
   @Override
     public void handleChannelCount(int channelCount) {
-      Platform.runLater(() -> this.channelCount.set(channelCount));
+      Platform.runLater(() -> {
+        clearErrorMessage();
+        this.channelCount.set(channelCount);
+      });
     }
 
 
@@ -75,9 +95,12 @@ public class RemoteModel implements RemoteClientListener {
    * @param channel the new current channel
    */
   @Override
-    public void handleCurrentChannel(int channel) {
-      Platform.runLater(() -> this.currentChannel.set(channel));
-    }
+  public void handleCurrentChannel(int channel) {
+    Platform.runLater(() -> {
+      clearErrorMessage();
+      this.currentChannel.set(channel);
+    });
+  }
 
   /**
    * Handle error messages.
@@ -86,8 +109,14 @@ public class RemoteModel implements RemoteClientListener {
    */
   @Override
     public void handleErrorMessage(String message) {
-//      TODO: Implement this
-//        view.showError(message);
+      Platform.runLater(() -> {
+        clearErrorMessage();
+        this.errorMessage.set(message);
+      });
+    }
+
+    private void clearErrorMessage() {
+      errorMessage.set("");
     }
 
   /**
@@ -136,6 +165,11 @@ public class RemoteModel implements RemoteClientListener {
 
   public void reconnect() {
     client.reconnect();
+    getInitialState();
+    if (!isOn.get()) {
+      channelCount.set(0);
+      currentChannel.set(0);
+    }
   }
 
   public BooleanProperty isOnProperty() {
@@ -156,5 +190,9 @@ public class RemoteModel implements RemoteClientListener {
 
   public IntegerProperty portProperty() {
     return port;
+  }
+
+  public StringProperty errorMessageProperty() {
+    return errorMessage;
   }
 }

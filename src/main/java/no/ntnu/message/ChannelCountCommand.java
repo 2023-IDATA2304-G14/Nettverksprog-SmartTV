@@ -5,7 +5,7 @@ import no.ntnu.tv.SmartTv;
 /**
  * A command asking for the number of the channels.
  */
-public class ChannelCountCommand extends Command {
+public class ChannelCountCommand implements GetCommand {
     @Override
     public Message execute(SmartTv logic) {
         Message response;

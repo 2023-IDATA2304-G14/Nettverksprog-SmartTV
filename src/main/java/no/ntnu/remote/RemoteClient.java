@@ -78,7 +78,7 @@ public class RemoteClient {
           Message message = null;
             do {
                 try {
-                  if (socketReader != null && socketReader.ready()) {
+                  if (socketReader != null) {
                     String serializedMessage = socketReader.readLine();
                     message = MessageSerializer.deserialize(serializedMessage);
                     handleMessage(message, listener);

@@ -2,6 +2,7 @@ package no.ntnu.message;
 
 public class MessageSerializer {
 
+  public static final String TV_STATE_COMMAND = "state";
   public static final String CHANNEL_COUNT_COMMAND = "count";
   public static final String CURRENT_CHANNEL_COMMAND = "current";
   public static final String TURN_ON_COMMAND = "on";
@@ -24,6 +25,8 @@ public class MessageSerializer {
     }
     if (message instanceof ChannelCountCommand) {
       return CHANNEL_COUNT_COMMAND;
+    } else if (message instanceof TvStateCommand) {
+      return TV_STATE_COMMAND;
     } else if (message instanceof TurnOnCommand) {
       return TURN_ON_COMMAND;
     } else if (message instanceof TurnOffCommand) {
@@ -59,6 +62,8 @@ public class MessageSerializer {
           return new TurnOffCommand();
         case CURRENT_CHANNEL_COMMAND:
           return new CurrentChannelCommand();
+        case TV_STATE_COMMAND:
+          return new TvStateCommand();
         case TV_STATE_ON:
           return new TvStateMessage(true);
         case TV_STATE_OFF:

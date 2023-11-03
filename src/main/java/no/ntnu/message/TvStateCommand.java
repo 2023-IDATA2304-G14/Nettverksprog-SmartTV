@@ -2,16 +2,13 @@ package no.ntnu.message;
 
 import no.ntnu.tv.SmartTv;
 
-/**
- * A command requesting to know the current channel of a TV.
- */
-public class CurrentChannelCommand implements GetCommand {
+public class TvStateCommand implements GetCommand {
     @Override
     public Message execute(SmartTv logic) {
         Message response;
         try {
-            int channel = logic.getCurrentChannel();
-            response = new CurrentChannelMessage(channel);
+            boolean tvState = logic.isTvOn();
+            response = new TvStateMessage(tvState);
         } catch (Exception e) {
             response = new ErrorMessage(e.getMessage());
         }

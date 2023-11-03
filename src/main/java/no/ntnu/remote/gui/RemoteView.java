@@ -72,8 +72,14 @@ public class RemoteView {
         mainPanel.add(channelDownButton, 1, 1);
         mainPanel.add(reconnectButton, 0, 2);
 
-        TextArea responseArea = new TextArea();
-        responseArea.setEditable(false);
+        TextArea errorMessageArea = new TextArea();
+        errorMessageArea.setEditable(false);
+
+        ChangeListener<String> errorMessageListener = (observable, oldValue, newValue) -> {
+            errorMessageArea.setText(newValue);
+        };
+        remoteModel.errorMessageProperty().addListener(new WeakChangeListener<>(errorMessageListener));
+        errorMessageArea.setText(remoteModel.errorMessageProperty().getValue());
 
         VBox topPanel = new VBox();
 
@@ -142,7 +148,7 @@ public class RemoteView {
 
         root.setTop(topPanel);
         root.setCenter(mainPanel);
-        root.setBottom(responseArea);
+        root.setBottom(errorMessageArea);
 
         Scene scene = new Scene(root, 400, 300);
         primaryStage.setScene(scene);

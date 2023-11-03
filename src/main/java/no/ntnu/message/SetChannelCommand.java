@@ -5,7 +5,7 @@ import no.ntnu.tv.SmartTv;
 /**
  * A message requesting that the channel is switched on a TV.
  */
-public class SetChannelCommand extends Command {
+public class SetChannelCommand implements Command {
     private final int channel;
 
     /**

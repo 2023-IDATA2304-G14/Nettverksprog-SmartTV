@@ -5,7 +5,7 @@ import no.ntnu.tv.SmartTv;
 /**
  * A command requesting to turn on the TV.
  */
-public class TurnOnCommand extends Command {
+public class TurnOnCommand implements Command {
     @Override
     public Message execute(SmartTv logic) {
         logic.turnOn();

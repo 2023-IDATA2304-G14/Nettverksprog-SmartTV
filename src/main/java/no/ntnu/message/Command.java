@@ -5,7 +5,7 @@ import no.ntnu.tv.SmartTv;
 /**
  * A command sent from the client to the server (from remote to TV).
  */
-public abstract class Command implements Message {
+public interface Command extends Message {
     /**
      * Execute the command.
      *

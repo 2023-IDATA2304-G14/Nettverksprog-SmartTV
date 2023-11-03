@@ -1,9 +1,6 @@
 package no.ntnu.tv;
 
-import no.ntnu.message.BroadcastMessage;
-import no.ntnu.message.Command;
-import no.ntnu.message.Message;
-import no.ntnu.message.MessageSerializer;
+import no.ntnu.message.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +30,7 @@ public class ClientHandler extends Thread {
         System.out.println("Received from client: " + clientCommand);
         response = clientCommand.execute(tvServer.getSmartTv());
         if (response != null) {
-          if (response instanceof BroadcastMessage) {
+          if (!(clientCommand instanceof GetCommand) && response instanceof BroadcastMessage) {
             tvServer.broadcastMessage(response);
           } else {
             sendResponseToClient(response);
@@ -52,6 +49,9 @@ public class ClientHandler extends Thread {
     Message clientCommand = null;
     try {
       String rawClientRequest = socketReader.readLine();
+      if (rawClientRequest == null) {
+        return null;
+      }
       clientCommand = MessageSerializer.deserialize(rawClientRequest);
       if (!(clientCommand instanceof Command)) {
         System.err.println("Received invalid request from client: " + clientCommand);
