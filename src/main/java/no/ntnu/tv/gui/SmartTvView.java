@@ -93,7 +93,12 @@ public class SmartTvView {
       controller.restartServer();
     });
 
-    vBox.getChildren().addAll(portBox, currentChannelBox, channelCountBox, powerBox, restartServerButton);
+    Button configureButton = new Button("Configure");
+    configureButton.setOnAction(event -> {
+      showConfigDialog();
+    });
+
+    vBox.getChildren().addAll(portBox, currentChannelBox, channelCountBox, powerBox, restartServerButton, configureButton);
 
     Scene scene = new Scene(root, 400, 300);
     stage.setScene(scene);
@@ -104,7 +109,7 @@ public class SmartTvView {
 
   public void showConfigDialog() {
     Dialog<Pair<String, String>> dialog = new Dialog<>();
-    dialog.setTitle("Select TV");
+    dialog.setTitle("Configure TV");
     dialog.setHeaderText("Please enter the Port of the TV and wanted channelCount");
 
     ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
@@ -154,15 +159,15 @@ public class SmartTvView {
     result.ifPresent(resultPair -> {
       try {
         boolean isDefaultPort = resultPair.getKey().trim().isEmpty();
-        int port = Integer.parseInt(resultPair.getKey().trim());
         int channelCount = Integer.parseInt(resultPair.getValue().trim());
 
-        System.out.println("Port: " + port);
         System.out.println("Channel count: " + channelCount);
 
         if (isDefaultPort) {
           model.newConfig(channelCount);
         } else {
+          int port = Integer.parseInt(resultPair.getKey().trim());
+          System.out.println("Port: " + port);
           model.newConfig(channelCount, port);
         }
       } catch (Exception e) {

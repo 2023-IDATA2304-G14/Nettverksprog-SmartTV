@@ -11,7 +11,7 @@ import java.util.List;
 
 public class TvServer {
   public static final String DEFAULT_HOSTNAME = "localhost";
-  public static final int DEFAULT_PORT = 12345;
+  public static final int DEFAULT_PORT = 1238;
   private final SmartTv smartTv;
   private int port;
   boolean isServerRunning;

@@ -65,12 +65,14 @@ public class RemoteView {
         Button channelUpButton = new Button("Channel Up");
         Button channelDownButton = new Button("Channel Down");
         Button reconnectButton = new Button("Reconnect to server");
+        Button reconfigureButton = new Button("Reconfigure settings");
 
         mainPanel.add(powerOnButton, 0, 0);
         mainPanel.add(powerOffButton, 1, 0);
         mainPanel.add(channelUpButton, 0, 1);
         mainPanel.add(channelDownButton, 1, 1);
         mainPanel.add(reconnectButton, 0, 2);
+        mainPanel.add(reconfigureButton, 1, 2);
 
         TextArea errorMessageArea = new TextArea();
         errorMessageArea.setEditable(false);
@@ -154,20 +156,21 @@ public class RemoteView {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        dialog();
+        configureSettings();
 
         powerOnButton.setOnAction(e -> remoteController.turnOnTV());
         powerOffButton.setOnAction(e -> remoteController.turnOffTV());
         channelUpButton.setOnAction(e -> remoteController.channelUp());
         channelDownButton.setOnAction(e -> remoteController.channelDown());
         reconnectButton.setOnAction(e -> remoteController.reconnect());
+        reconfigureButton.setOnAction(e -> configureSettings());
     }
 
     /**
      * Helper class that display a dialog where the user can input the ip and
      * the port to which tv one is going to connect to.
      */
-    private void dialog(){
+    private void configureSettings(){
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Select TV");
         dialog.setHeaderText("Please enter the IP-address and the Port of the TV.");
