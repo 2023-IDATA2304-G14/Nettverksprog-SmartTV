@@ -13,10 +13,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import no.ntnu.tv.TvServer;
 
 import java.util.Optional;
 
+/**
+ * The SmartTvView represents the View component of the SmartTv MVC architecture.
+ * Hande the GUI that the users see.
+ *
+ * @author Anders Lund
+ * @version 02.11.2023
+ */
 public class SmartTvView {
   private final SmartTvModel model;
   private final SmartTvController controller;
@@ -25,13 +31,22 @@ public class SmartTvView {
   private ChangeListener<Number> channelCountListener;
   private ChangeListener<Boolean> powerListener;
 
-
+  /**
+   * The constructor which connect the model and controller, and initialize the stage
+   *
+   * @param stage The JavaFX stage where the SmartTvView will be displayed.
+   */
   public SmartTvView(Stage stage) {
     model = new SmartTvModel();
     controller = new SmartTvController(model);
     initialize(stage);
   }
 
+  /**
+   * Initialize the stage and displays the GUI components.
+   *
+   * @param stage The primary JavaFX stage where the RemoteView will be displayed.
+   */
   private void initialize(Stage stage) {
     stage.setTitle("Smart TV");
 
@@ -107,6 +122,9 @@ public class SmartTvView {
     showConfigDialog();
   }
 
+  /**
+   * Dialog to show the configuration window.
+   */
   public void showConfigDialog() {
     Dialog<Pair<String, String>> dialog = new Dialog<>();
     dialog.setTitle("Configure TV");
