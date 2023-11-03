@@ -61,11 +61,9 @@ public class SmartTvModel implements SmartTvSubscriber {
   }
 
   public void restartServer() throws IOException {
-    int channelCount = tvServer.getSmartTv().getChannelCount();
-    int port = tvServer.getPort();
 
     removeServer();
-    newConfig(channelCount, port);
+    newConfig(channelCount.get(), port.get());
   }
 
   public void removeServer() {

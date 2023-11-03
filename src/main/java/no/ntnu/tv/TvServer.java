@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TvServer {
   public static final String DEFAULT_HOSTNAME = "localhost";
@@ -63,6 +65,9 @@ public class TvServer {
 
   private ClientHandler acceptNextClientConnection(ServerSocket listeningSocket) {
     ClientHandler clientHandler = null;
+    if (listeningSocket == null || listeningSocket.isClosed()) {
+      return null;
+    }
     try {
       Socket clientSocket = listeningSocket.accept();
       System.out.println("New client connected from " + clientSocket.getRemoteSocketAddress());
@@ -82,14 +87,22 @@ public class TvServer {
   }
   public void stopServer() {
     isServerRunning = false;
-    Iterator<ClientHandler> iterator = connectedClients.iterator();
-    while (iterator.hasNext()) {
-      ClientHandler clientHandler = iterator.next();
-      clientHandler.close();
-      iterator.remove();
+    List<ClientHandler> clientsCopy = new ArrayList<>(connectedClients);
+
+    ExecutorService executor = Executors.newFixedThreadPool(clientsCopy.size());
+
+    for (ClientHandler clientHandler : clientsCopy) {
+      executor.execute(() -> {
+        clientHandler.close();
+        connectedClients.remove(clientHandler);
+      });
     }
+
+    executor.shutdown();
+
     try {
       serverSocket.close();
+      serverSocket = null;
     } catch (IOException e) {
       System.err.println("Could not close server socket: " + e.getMessage());
     }
