@@ -45,6 +45,7 @@ public class RemoteModel implements RemoteClientListener {
       this.host.set(host);
       this.port.set(port);
       getInitialState();
+      resetViewIfOff();
     }
 
     public void getInitialState() {
@@ -166,6 +167,10 @@ public class RemoteModel implements RemoteClientListener {
   public void reconnect() {
     client.reconnect();
     getInitialState();
+    resetViewIfOff();
+  }
+
+  public void resetViewIfOff() {
     if (!isOn.get()) {
       channelCount.set(0);
       currentChannel.set(0);
