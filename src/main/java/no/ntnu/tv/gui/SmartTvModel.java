@@ -8,6 +8,7 @@ import no.ntnu.tv.SmartTvSubscriber;
 import no.ntnu.tv.TvServer;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,14 +41,22 @@ public class SmartTvModel implements SmartTvSubscriber {
   }
 
   private void startServer() {
+    CountDownLatch portAssigned = new CountDownLatch(1);
     serverExecutor = Executors.newSingleThreadExecutor();
     serverExecutor.execute(() -> {
       try {
-        tvServer.startServer();
+        tvServer.startServer(portAssigned);
       } catch (IOException e) {
         e.printStackTrace();
       }
     });
+
+    try {
+      portAssigned.await();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+
     runLater(() -> this.port.set(tvServer.getPort()));
   }
 

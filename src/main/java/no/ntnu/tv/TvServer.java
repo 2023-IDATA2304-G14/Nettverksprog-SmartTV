@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class TvServer {
   public static final String DEFAULT_HOSTNAME = "localhost";
@@ -17,6 +18,7 @@ public class TvServer {
   boolean isServerRunning;
   private final List<ClientHandler> connectedClients = new ArrayList<>();
   private ServerSocket serverSocket;
+  private CountDownLatch portAssigned;
 
   public TvServer(SmartTv smartTv) throws IllegalArgumentException, IOException {
     this(smartTv, DEFAULT_PORT);
@@ -32,6 +34,11 @@ public class TvServer {
 
     this.smartTv = smartTv;
     this.port = port;
+  }
+
+  public void startServer(CountDownLatch portAssigned) throws IOException {
+    this.portAssigned = portAssigned;
+    startServer();
   }
 
   public void startServer() throws IOException {
@@ -70,6 +77,7 @@ public class TvServer {
     ServerSocket listeningSocket = null;
     listeningSocket = new ServerSocket(port);
     port = listeningSocket.getLocalPort();
+    portAssigned.countDown();
     return listeningSocket;
   }
   public void stopServer() {
